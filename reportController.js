@@ -15,7 +15,6 @@ exports.crearReporte = (req, res) => {
     const reporteId = result.insertId;
 
     if (imagenes && imagenes.length > 0) {
-
       const valores = imagenes.map(img => [reporteId, img.path]);
 
       const sqlImagenes = "INSERT INTO imagenes (reporte_id, ruta) VALUES ?";
@@ -26,12 +25,11 @@ exports.crearReporte = (req, res) => {
           return res.status(500).json({ message: "Error al guardar imágenes" });
         }
 
-        res.json({ message: "Reporte con imágenes guardado correctamente" });
+        return res.json({ message: "Reporte con imágenes guardado correctamente" });
       });
 
     } else {
-      res.json({ message: "Reporte guardado sin imágenes" });
+      return res.json({ message: "Reporte guardado sin imágenes" });
     }
-
   });
 };

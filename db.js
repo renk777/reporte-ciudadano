@@ -1,18 +1,21 @@
+require('dotenv').config();
 const mysql = require('mysql2');
-
-const conexion = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '1029721470k.',
-    database: 'reportes_ciudad'
+ 
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306
 });
-
-conexion.connect((err) => {
-    if (err) {
-        console.error("Error de conexión:", err);
-        return;
-    }
-    console.log("Conectado a MySQL");
+ 
+db.connect((err) => {
+  if (err) {
+    console.error('Error de conexión:', err);
+  } else {
+    console.log('Conectado a MySQL remoto');
+  }
 });
-
-module.exports = conexion;
+ 
+module.exports = db;
+ 
