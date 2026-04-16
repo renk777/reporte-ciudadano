@@ -18,10 +18,10 @@
       <label>Ubicación</label>
       <input type="text" id="ubicacion" placeholder="Ej: Calle 10 con carrera 5" required>
 
-      <label>Imagen</label>
-      <input type="file" id="imagen" accept="image/*">
+      <label>Imágenes</label>
+      <input type="file" id="imagenes" name="imagenes" multiple accept="image/*">
 
-      <img id="preview" alt="Vista previa">
+      <div id="preview" style="margin-top:10px; display:flex; flex-wrap:wrap;"></div>
 
       <button type="submit">Enviar Reporte</button>
 
@@ -29,5 +29,6 @@
   </div>
 
   <script src="script.js"></script>
+
 </body>
 </html>
