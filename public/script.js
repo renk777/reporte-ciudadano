@@ -6,11 +6,10 @@ const btnUbicacion = document.getElementById("btnUbicacion");
 
 const API_URL = "https://reporte-ciudadano-production.up.railway.app";
 
-// Coordenadas de Montería, Córdoba, Colombia
 const MONTERIA_LAT = 8.7479;
 const MONTERIA_LNG = -75.8814;
 
-// Inicializar mapa centrado en Montería
+// ── MAPA ──────────────────────────────────────────
 const mapa = L.map('mapa').setView([MONTERIA_LAT, MONTERIA_LNG], 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -25,15 +24,11 @@ function ponerMarcador(lat, lng) {
   inputUbicacion.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 }
 
-// Clic en el mapa
-mapa.on('click', (e) => {
-  ponerMarcador(e.latlng.lat, e.latlng.lng);
-});
+mapa.on('click', (e) => ponerMarcador(e.latlng.lat, e.latlng.lng));
 
-// Botón usar ubicación
 btnUbicacion.addEventListener("click", () => {
   if (!navigator.geolocation) {
-    alert("Tu navegador no soporta geolocalización. Selecciona la ubicación en el mapa.");
+    alert("Tu navegador no soporta geolocalización. Selecciona en el mapa.");
     return;
   }
   btnUbicacion.textContent = "Obteniendo...";
@@ -56,24 +51,32 @@ btnUbicacion.addEventListener("click", () => {
   );
 });
 
-// Obtener ubicación automáticamente al cargar
 window.addEventListener("load", () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        mapa.setView([lat, lng], 16);
-        ponerMarcador(lat, lng);
+        mapa.setView([pos.coords.latitude, pos.coords.longitude], 16);
+        ponerMarcador(pos.coords.latitude, pos.coords.longitude);
       },
-      () => {
-        inputUbicacion.placeholder = "Selecciona en el mapa";
-      }
+      () => { inputUbicacion.placeholder = "Selecciona en el mapa"; }
     );
   }
+
+  // Limitar fecha máxima a hoy en el campo de nacimiento
+  const hoy = new Date().toISOString().split("T")[0];
+  document.getElementById("fechaNacimiento").setAttribute("max", hoy);
 });
 
-// Preview imágenes
+// ── VALIDAR MAYORÍA DE EDAD ────────────────────────
+function esMayorDeEdad(fechaNacimiento) {
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  const edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const cumpleEsteAno = new Date(hoy.getFullYear(), nacimiento.getMonth(), nacimiento.getDate());
+  return edad > 18 || (edad === 18 && hoy >= cumpleEsteAno);
+}
+
+// ── PREVIEW IMÁGENES ──────────────────────────────
 inputImagenes.addEventListener("change", () => {
   preview.innerHTML = "";
   const archivos = inputImagenes.files;
@@ -89,9 +92,27 @@ inputImagenes.addEventListener("change", () => {
   }
 });
 
-// Enviar reporte
+// ── ENVIAR REPORTE ────────────────────────────────
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+  const inputFecha = document.getElementById("fechaNacimiento");
+
+  // Validar mayoría de edad
+  if (!fechaNacimiento) {
+    inputFecha.classList.add("input-error");
+    alert("Por favor ingresa tu fecha de nacimiento.");
+    return;
+  }
+
+  if (!esMayorDeEdad(fechaNacimiento)) {
+    inputFecha.classList.add("input-error");
+    alert("Lo sentimos, debes ser mayor de 18 años para enviar un reporte.");
+    return;
+  }
+
+  inputFecha.classList.remove("input-error");
 
   const descripcion = document.getElementById("descripcion").value;
   const ubicacion = inputUbicacion.value;
@@ -113,7 +134,6 @@ form.addEventListener("submit", async (e) => {
     const res = await fetch(`${API_URL}/reporte`, { method: "POST", body: formData });
     const data = await res.json();
 
-    // Mostrar el ID del reporte al ciudadano
     alert(`${data.message}\n\n📋 Guarda tu número de reporte para consultarlo después:\nReporte #${data.reporteId}`);
 
     form.reset();

@@ -31,8 +31,19 @@ label {
   color: #333;
 }
 
+.requerido { color: #e74c3c; }
+
+.hint {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.mapa-hint { margin-top: 8px; }
+
 input[type="text"],
 input[type="number"],
+input[type="date"],
 input[type="file"] {
   width: 100%;
   padding: 9px 12px;
@@ -40,6 +51,16 @@ input[type="file"] {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
+}
+
+input[type="date"] {
+  color: #333;
+}
+
+/* Error en fecha de nacimiento */
+input.input-error {
+  border-color: #e74c3c;
+  background: #fff5f5;
 }
 
 #ubicacion-container {
@@ -99,14 +120,12 @@ button[type="submit"]:hover { background: #0056b3; }
   margin-top: 8px;
 }
 
-/* Separador */
 .separador {
   margin: 28px 0;
   border: none;
   border-top: 1px solid #e0e0e0;
 }
 
-/* Sección consulta */
 .subtitulo {
   font-size: 16px;
   color: #1a3c5e;
@@ -155,12 +174,7 @@ button[type="submit"]:hover { background: #0056b3; }
 }
 
 .resultado-num { font-size: 13px; color: #666; }
-
-.resultado-desc {
-  font-weight: 600;
-  margin-top: 4px;
-  font-size: 15px;
-}
+.resultado-desc { font-weight: 600; margin-top: 4px; font-size: 15px; }
 
 .resultado-detalles {
   margin-top: 12px;
@@ -170,7 +184,6 @@ button[type="submit"]:hover { background: #0056b3; }
   gap: 5px;
 }
 
-/* Badges de estado */
 .estado-badge {
   padding: 5px 12px;
   border-radius: 20px;
@@ -178,9 +191,9 @@ button[type="submit"]:hover { background: #0056b3; }
   font-weight: 700;
 }
 
-.estado-Pendiente { background: #fff3cd; color: #856404; }
-.estado-Asignado { background: #cce5ff; color: #004085; }
-.estado-En-proceso { background: #d4edda; color: #155724; }
+.estado-Pendiente   { background: #fff3cd; color: #856404; }
+.estado-Asignado    { background: #cce5ff; color: #004085; }
+.estado-En-proceso  { background: #d4edda; color: #155724; }
 .estado-Solucionado { background: #d1ecf1; color: #0c5460; }
 
 #error-consulta {
@@ -194,7 +207,6 @@ button[type="submit"]:hover { background: #0056b3; }
   border-radius: 8px;
 }
 
-/* Link admin */
 .link-admin {
   text-align: center;
   margin-top: 20px;

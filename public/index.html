@@ -13,26 +13,26 @@
   <div class="container">
     <h1>Reporte de Problemas Urbanos</h1>
 
-    <!-- FORMULARIO DE REPORTE -->
     <form id="formReporte">
 
-      <label>Descripción</label>
+      <label>Fecha de nacimiento <span class="requerido">*</span></label>
+      <input type="date" id="fechaNacimiento" required>
+      <p class="hint">Debes ser mayor de 18 años para reportar.</p>
+
+      <label>Descripción <span class="requerido">*</span></label>
       <input type="text" id="descripcion" placeholder="Describe el problema" required>
 
-      <label>Ubicación</label>
+      <label>Ubicación <span class="requerido">*</span></label>
       <div id="ubicacion-container">
         <input type="text" id="ubicacion" placeholder="Obteniendo ubicación..." readonly>
         <button type="button" id="btnUbicacion">📍 Usar mi ubicación</button>
       </div>
 
-      <p id="mapa-instruccion" style="font-size:13px; color:#555; margin-top:8px;">
-        O selecciona la ubicación en el mapa haciendo clic:
-      </p>
+      <p class="hint mapa-hint">O selecciona la ubicación en el mapa haciendo clic:</p>
       <div id="mapa"></div>
 
       <label style="margin-top:15px;">Imágenes</label>
       <input type="file" id="imagenes" name="imagenes" multiple accept="image/*">
-
       <div id="preview"></div>
 
       <button type="submit">Enviar Reporte</button>
@@ -41,10 +41,8 @@
 
     <hr class="separador">
 
-    <!-- CONSULTAR ESTADO -->
     <div id="seccion-consulta">
       <h2 class="subtitulo">🔍 Consultar estado de un reporte</h2>
-
       <div class="consulta-row">
         <input type="number" id="inputReporteId" placeholder="Número del reporte" min="1">
         <button type="button" class="btn-consultar" onclick="consultarEstado()">Consultar</button>
@@ -76,6 +74,5 @@
   </div>
 
   <script src="script.js"></script>
-
 </body>
 </html>
