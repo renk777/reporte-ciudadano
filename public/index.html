@@ -2,8 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reporte Ciudadano</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -11,14 +16,23 @@
     <h1>Reporte de Problemas Urbanos</h1>
 
     <form id="formReporte">
-      
+
       <label>Descripción</label>
       <input type="text" id="descripcion" placeholder="Describe el problema" required>
 
       <label>Ubicación</label>
-      <input type="text" id="ubicacion" placeholder="Ej: Calle 10 con carrera 5" required>
+      <div id="ubicacion-container">
+        <input type="text" id="ubicacion" placeholder="Obteniendo ubicación..." readonly>
+        <button type="button" id="btnUbicacion">📍 Usar mi ubicación</button>
+      </div>
 
-      <label>Imágenes</label>
+      <!-- Mapa -->
+      <p id="mapa-instruccion" style="font-size:13px; color:#555; margin-top:8px;">
+        O selecciona la ubicación en el mapa haciendo clic:
+      </p>
+      <div id="mapa" style="height: 300px; border-radius: 10px; margin-top: 5px;"></div>
+
+      <label style="margin-top:15px;">Imágenes</label>
       <input type="file" id="imagenes" name="imagenes" multiple accept="image/*">
 
       <div id="preview" style="margin-top:10px; display:flex; flex-wrap:wrap;"></div>
