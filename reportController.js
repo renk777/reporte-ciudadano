@@ -23,11 +23,11 @@ exports.crearReporte = (req, res) => {
           console.error("Error al guardar imágenes:", err2);
           return res.status(500).json({ message: "Error al guardar imágenes" });
         }
-        return res.json({ message: "Reporte con imágenes guardado correctamente" });
+        return res.json({ message: "Reporte guardado correctamente", reporteId });
       });
 
     } else {
-      return res.json({ message: "Reporte guardado sin imágenes" });
+      return res.json({ message: "Reporte guardado correctamente", reporteId });
     }
   });
 };

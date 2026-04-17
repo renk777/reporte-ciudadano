@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reporte Ciudadano</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
@@ -15,6 +13,7 @@
   <div class="container">
     <h1>Reporte de Problemas Urbanos</h1>
 
+    <!-- FORMULARIO DE REPORTE -->
     <form id="formReporte">
 
       <label>Descripción</label>
@@ -26,20 +25,54 @@
         <button type="button" id="btnUbicacion">📍 Usar mi ubicación</button>
       </div>
 
-      <!-- Mapa -->
       <p id="mapa-instruccion" style="font-size:13px; color:#555; margin-top:8px;">
         O selecciona la ubicación en el mapa haciendo clic:
       </p>
-      <div id="mapa" style="height: 300px; border-radius: 10px; margin-top: 5px;"></div>
+      <div id="mapa"></div>
 
       <label style="margin-top:15px;">Imágenes</label>
       <input type="file" id="imagenes" name="imagenes" multiple accept="image/*">
 
-      <div id="preview" style="margin-top:10px; display:flex; flex-wrap:wrap;"></div>
+      <div id="preview"></div>
 
       <button type="submit">Enviar Reporte</button>
 
     </form>
+
+    <hr class="separador">
+
+    <!-- CONSULTAR ESTADO -->
+    <div id="seccion-consulta">
+      <h2 class="subtitulo">🔍 Consultar estado de un reporte</h2>
+
+      <div class="consulta-row">
+        <input type="number" id="inputReporteId" placeholder="Número del reporte" min="1">
+        <button type="button" class="btn-consultar" onclick="consultarEstado()">Consultar</button>
+      </div>
+
+      <div id="resultado-consulta">
+        <div class="resultado-header">
+          <div>
+            <p class="resultado-num">Reporte #<span id="res-id"></span></p>
+            <p class="resultado-desc" id="res-descripcion"></p>
+          </div>
+          <span id="res-estado-badge" class="estado-badge"></span>
+        </div>
+        <div class="resultado-detalles">
+          <p>📍 <strong>Ubicación:</strong> <span id="res-ubicacion"></span></p>
+          <p>🏷️ <strong>Categoría:</strong> <span id="res-categoria"></span></p>
+          <p>🏢 <strong>Entidad asignada:</strong> <span id="res-entidad"></span></p>
+          <p>📅 <strong>Fecha:</strong> <span id="res-fecha"></span></p>
+        </div>
+      </div>
+
+      <div id="error-consulta"></div>
+    </div>
+
+    <div class="link-admin">
+      <a href="login.html">🔐 Acceso para administradores y entidades</a>
+    </div>
+
   </div>
 
   <script src="script.js"></script>
