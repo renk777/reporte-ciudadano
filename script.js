@@ -2,7 +2,7 @@ const form = document.getElementById("formReporte");
 const inputImagenes = document.getElementById("imagenes");
 const preview = document.getElementById("preview");
  
-const API_URL = "http://localhost:3000";
+const API_URL = "https://reporte-ciudadano-production.up.railway.app";
  
 inputImagenes.addEventListener("change", () => {
   preview.innerHTML = "";
