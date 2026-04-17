@@ -1,0 +1,141 @@
+const express = require('express');
+const router = express.Router();
+const pool = require('./db');
+
+// Middleware para verificar rol
+function verificarRol(rolRequerido) {
+  return (req, res, next) => {
+    const rol = req.headers['x-rol'];
+    if (rol !== rolRequerido) {
+      return res.status(403).json({ message: "Acceso denegado" });
+    }
+    next();
+  };
+}
+
+// RF07: Login para admins y entidades
+router.post('/login', (req, res) => {
+  const { usuario, password } = req.body;
+
+  const sql = "SELECT id, nombre, usuario, rol FROM usuarios WHERE usuario = ? AND password = ?";
+  pool.query(sql, [usuario, password], (err, results) => {
+    if (err) {
+      console.error("Error en login:", err);
+      return res.status(500).json({ success: false, message: "Error del servidor" });
+    }
+
+    if (results.length === 0) {
+      return res.json({ success: false, message: "Credenciales incorrectas" });
+    }
+
+    return res.json({ success: true, user: results[0] });
+  });
+});
+
+// RF05: Admin - obtener todos los reportes
+router.get('/admin/reportes', verificarRol('admin'), (req, res) => {
+  const { estado } = req.query;
+
+  let sql = `
+    SELECT r.*, u.nombre as entidad_nombre 
+    FROM reportes r
+    LEFT JOIN usuarios u ON r.entidad_id = u.id
+  `;
+  const params = [];
+
+  if (estado) {
+    sql += " WHERE r.estado = ?";
+    params.push(estado);
+  }
+
+  sql += " ORDER BY r.fecha DESC";
+
+  pool.query(sql, params, (err, results) => {
+    if (err) {
+      console.error("Error al obtener reportes:", err);
+      return res.status(500).json({ message: "Error del servidor" });
+    }
+    res.json(results);
+  });
+});
+
+// Obtener lista de entidades para el admin
+router.get('/admin/entidades', verificarRol('admin'), (req, res) => {
+  pool.query("SELECT id, nombre FROM usuarios WHERE rol = 'entidad'", (err, results) => {
+    if (err) return res.status(500).json({ message: "Error del servidor" });
+    res.json(results);
+  });
+});
+
+// RF06: Admin - asignar reporte a entidad
+router.put('/admin/asignar/:id', verificarRol('admin'), (req, res) => {
+  const { id } = req.params;
+  const { entidad_id, categoria } = req.body;
+
+  const sql = "UPDATE reportes SET entidad_id = ?, categoria = ?, estado = 'Asignado' WHERE id = ?";
+  pool.query(sql, [entidad_id, categoria, id], (err) => {
+    if (err) {
+      console.error("Error al asignar:", err);
+      return res.status(500).json({ message: "Error al asignar el reporte" });
+    }
+    res.json({ message: "Reporte asignado correctamente" });
+  });
+});
+
+// RF08/RF09: Entidad - obtener sus reportes asignados
+router.get('/entidad/reportes', verificarRol('entidad'), (req, res) => {
+  const entidad_id = req.headers['x-usuario-id'];
+
+  const sql = "SELECT * FROM reportes WHERE entidad_id = ? ORDER BY fecha DESC";
+  pool.query(sql, [entidad_id], (err, results) => {
+    if (err) {
+      console.error("Error al obtener reportes:", err);
+      return res.status(500).json({ message: "Error del servidor" });
+    }
+    res.json(results);
+  });
+});
+
+// RF08/RF09: Entidad - actualizar estado del reporte
+router.put('/entidad/estado/:id', verificarRol('entidad'), (req, res) => {
+  const { id } = req.params;
+  const { estado } = req.body;
+  const entidad_id = req.headers['x-usuario-id'];
+
+  const estadosValidos = ['Asignado', 'En proceso', 'Solucionado'];
+  if (!estadosValidos.includes(estado)) {
+    return res.status(400).json({ message: "Estado no válido" });
+  }
+
+  // Verificar que el reporte pertenece a esta entidad
+  const sqlCheck = "SELECT id FROM reportes WHERE id = ? AND entidad_id = ?";
+  pool.query(sqlCheck, [id, entidad_id], (err, results) => {
+    if (err) return res.status(500).json({ message: "Error del servidor" });
+    if (results.length === 0) return res.status(403).json({ message: "No tienes permiso para este reporte" });
+
+    const sqlUpdate = "UPDATE reportes SET estado = ? WHERE id = ?";
+    pool.query(sqlUpdate, [estado, id], (err2) => {
+      if (err2) return res.status(500).json({ message: "Error al actualizar" });
+      res.json({ message: `Estado actualizado a: ${estado}` });
+    });
+  });
+});
+
+// RF10: Consultar estado de un reporte (público)
+router.get('/reporte/estado/:id', (req, res) => {
+  const { id } = req.params;
+  const sql = `
+    SELECT r.id, r.descripcion, r.ubicacion, r.estado, r.categoria, r.fecha,
+           u.nombre as entidad_nombre
+    FROM reportes r
+    LEFT JOIN usuarios u ON r.entidad_id = u.id
+    WHERE r.id = ?
+  `;
+  pool.query(sql, [id], (err, results) => {
+    if (err) return res.status(500).json({ message: "Error del servidor" });
+    if (results.length === 0) return res.status(404).json({ message: "Reporte no encontrado" });
+    res.json(results[0]);
+  });
+});
+
+module.exports = router;

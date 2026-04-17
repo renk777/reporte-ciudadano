@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Entidad - Reporte Ciudadano</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a5e3a;
+      color: white;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 { font-size: 18px; }
+    header span { font-size: 13px; opacity: 0.8; }
+
+    .btn-cerrar {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-cerrar:hover { background: rgba(255,255,255,0.3); }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      padding: 20px 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px 24px;
+      flex: 1;
+      min-width: 150px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .stat-card .numero { font-size: 32px; font-weight: 700; color: #1a5e3a; }
+    .stat-card .etiqueta { font-size: 12px; color: #666; margin-top: 4px; }
+
+    .contenido { padding: 0 30px 30px; }
+
+    table {
+      width: 100%;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-collapse: collapse;
+      overflow: hidden;
+    }
+
+    thead { background: #1a5e3a; color: white; }
+
+    th, td { padding: 12px 16px; text-align: left; font-size: 14px; }
+
+    tr:not(:last-child) td { border-bottom: 1px solid #f0f0f0; }
+    tr:hover td { background: #f9fbfd; }
+
+    .estado-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .estado-Pendiente { background: #fff3cd; color: #856404; }
+    .estado-Asignado { background: #cce5ff; color: #004085; }
+    .estado-En\ proceso { background: #d4edda; color: #155724; }
+    .estado-Solucionado { background: #d1ecf1; color: #0c5460; }
+
+    .estado-select {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-guardar {
+      background: #1a5e3a;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .btn-guardar:hover { background: #145230; }
+
+    .cargando { text-align: center; padding: 40px; color: #666; }
+
+    .titulo-seccion {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a5e3a;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>🏢 Panel Entidad Gubernamental</h1>
+      <span id="nombre-entidad"></span>
+    </div>
+    <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
+  </header>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="numero" id="stat-total">-</div>
+      <div class="etiqueta">Reportes asignados</div>
+    </div>
+    <div class="stat-card">
+      <div class="numero" id="stat-proceso">-</div>
+      <div class="etiqueta">En proceso</div>
+    </div>
+    <div class="stat-card">
+      <div class="numero" id="stat-solucionado">-</div>
+      <div class="etiqueta">Solucionados</div>
+    </div>
+  </div>
+
+  <div class="contenido">
+    <p class="titulo-seccion">Reportes asignados a mi entidad</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Ubicación</th>
+          <th>Fecha</th>
+          <th>Estado actual</th>
+          <th>Actualizar estado</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-reportes">
+        <tr><td colspan="7" class="cargando">Cargando reportes...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const API_URL = "https://reporte-ciudadano-production.up.railway.app";
+
+    const sesion = JSON.parse(localStorage.getItem("sesion") || "null");
+    if (!sesion || sesion.rol !== "entidad") {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("nombre-entidad").textContent = sesion.nombre;
+    }
+
+    async function cargarReportes() {
+      try {
+        const res = await fetch(`${API_URL}/entidad/reportes`, {
+          headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
+        });
+        const data = await res.json();
+
+        document.getElementById("stat-total").textContent = data.length;
+        document.getElementById("stat-proceso").textContent = data.filter(r => r.estado === "En proceso").length;
+        document.getElementById("stat-solucionado").textContent = data.filter(r => r.estado === "Solucionado").length;
+
+        const tbody = document.getElementById("tabla-reportes");
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="cargando">No tienes reportes asignados</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(r => `
+          <tr>
+            <td>${r.id}</td>
+            <td>${r.descripcion}</td>
+            <td>${r.categoria || '-'}</td>
+            <td>${r.ubicacion}</td>
+            <td>${new Date(r.fecha).toLocaleDateString("es-CO")}</td>
+            <td><span class="estado-badge estado-${r.estado}">${r.estado}</span></td>
+            <td>
+              <select class="estado-select" id="estado-${r.id}">
+                <option value="Asignado" ${r.estado === "Asignado" ? "selected" : ""}>Asignado</option>
+                <option value="En proceso" ${r.estado === "En proceso" ? "selected" : ""}>En proceso</option>
+                <option value="Solucionado" ${r.estado === "Solucionado" ? "selected" : ""}>Solucionado</option>
+              </select>
+              <button class="btn-guardar" onclick="actualizarEstado(${r.id})">Guardar</button>
+            </td>
+          </tr>
+        `).join("");
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function actualizarEstado(reporteId) {
+      const estado = document.getElementById(`estado-${reporteId}`).value;
+
+      try {
+        const res = await fetch(`${API_URL}/entidad/estado/${reporteId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-usuario-id": sesion.id,
+            "x-rol": sesion.rol
+          },
+          body: JSON.stringify({ estado })
+        });
+
+        const data = await res.json();
+        alert(data.message);
+        cargarReportes();
+      } catch (err) {
+        alert("Error al actualizar el estado");
+      }
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("sesion");
+      window.location.href = "login.html";
+    }
+
+    cargarReportes();
+  </script>
+
+</body>
+</html>

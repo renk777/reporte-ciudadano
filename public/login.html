@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - Sistema de Reporte Ciudadano</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a3c5e 0%, #2d6a9f 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-box {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo .icono {
+      font-size: 48px;
+    }
+
+    .logo h1 {
+      font-size: 20px;
+      color: #1a3c5e;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .logo p {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+      margin-top: 18px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2d6a9f;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #1a3c5e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #2d6a9f; }
+
+    #error {
+      color: #e74c3c;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .volver {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+
+    .volver a {
+      color: #2d6a9f;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <div class="logo">
+      <div class="icono">🏛️</div>
+      <h1>Sistema de Reporte Ciudadano</h1>
+      <p>Montería, Córdoba</p>
+    </div>
+
+    <label>Usuario</label>
+    <input type="text" id="usuario" placeholder="Ingresa tu usuario">
+
+    <label>Contraseña</label>
+    <input type="password" id="password" placeholder="Ingresa tu contraseña">
+
+    <button onclick="iniciarSesion()">Iniciar Sesión</button>
+
+    <div id="error">Usuario o contraseña incorrectos</div>
+
+    <div class="volver">
+      <a href="index.html">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://reporte-ciudadano-production.up.railway.app";
+
+    async function iniciarSesion() {
+      const usuario = document.getElementById("usuario").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorDiv = document.getElementById("error");
+
+      if (!usuario || !password) {
+        errorDiv.textContent = "Por favor completa todos los campos.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usuario, password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          // Guardar sesión en localStorage
+          localStorage.setItem("sesion", JSON.stringify(data.user));
+
+          // Redirigir según el rol
+          if (data.user.rol === "admin") {
+            window.location.href = "admin.html";
+          } else {
+            window.location.href = "entidad.html";
+          }
+        } else {
+          errorDiv.textContent = "Usuario o contraseña incorrectos.";
+          errorDiv.style.display = "block";
+        }
+      } catch (err) {
+        errorDiv.textContent = "Error de conexión. Intenta de nuevo.";
+        errorDiv.style.display = "block";
+      }
+    }
+
+    // Enter para iniciar sesión
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") iniciarSesion();
+    });
+  </script>
+
+</body>
+</html>

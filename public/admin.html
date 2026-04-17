@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrador - Reporte Ciudadano</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a3c5e;
+      color: white;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 { font-size: 18px; }
+    header span { font-size: 14px; opacity: 0.8; }
+
+    .btn-cerrar {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-cerrar:hover { background: rgba(255,255,255,0.3); }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      padding: 20px 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px 24px;
+      flex: 1;
+      min-width: 150px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .stat-card .numero {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a3c5e;
+    }
+
+    .stat-card .etiqueta {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .contenido { padding: 0 30px 30px; }
+
+    .filtros {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filtros select, .filtros input {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-collapse: collapse;
+      overflow: hidden;
+    }
+
+    thead {
+      background: #1a3c5e;
+      color: white;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    tr:not(:last-child) td {
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tr:hover td { background: #f9fbfd; }
+
+    .estado-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .estado-Pendiente { background: #fff3cd; color: #856404; }
+    .estado-Asignado { background: #cce5ff; color: #004085; }
+    .estado-En\ proceso { background: #d4edda; color: #155724; }
+    .estado-Solucionado { background: #d1ecf1; color: #0c5460; }
+
+    .btn-asignar {
+      background: #2d6a9f;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-asignar:hover { background: #1a3c5e; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.activo { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      width: 420px;
+      max-width: 90%;
+    }
+
+    .modal h2 { font-size: 18px; color: #1a3c5e; margin-bottom: 20px; }
+
+    .modal label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      margin-top: 14px;
+      color: #333;
+    }
+
+    .modal select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-confirmar {
+      flex: 1;
+      padding: 10px;
+      background: #1a3c5e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-cancelar {
+      flex: 1;
+      padding: 10px;
+      background: #eee;
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .cargando { text-align: center; padding: 40px; color: #666; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>🏛️ Panel Administrador</h1>
+      <span id="nombre-admin"></span>
+    </div>
+    <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
+  </header>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="numero" id="stat-total">-</div>
+      <div class="etiqueta">Total reportes</div>
+    </div>
+    <div class="stat-card">
+      <div class="numero" id="stat-pendiente">-</div>
+      <div class="etiqueta">Pendientes</div>
+    </div>
+    <div class="stat-card">
+      <div class="numero" id="stat-asignado">-</div>
+      <div class="etiqueta">Asignados</div>
+    </div>
+    <div class="stat-card">
+      <div class="numero" id="stat-proceso">-</div>
+      <div class="etiqueta">En proceso</div>
+    </div>
+    <div class="stat-card">
+      <div class="numero" id="stat-solucionado">-</div>
+      <div class="etiqueta">Solucionados</div>
+    </div>
+  </div>
+
+  <div class="contenido">
+    <div class="filtros">
+      <select id="filtro-estado" onchange="cargarReportes()">
+        <option value="">Todos los estados</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Asignado">Asignado</option>
+        <option value="En proceso">En proceso</option>
+        <option value="Solucionado">Solucionado</option>
+      </select>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Descripción</th>
+          <th>Ubicación</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Entidad asignada</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-reportes">
+        <tr><td colspan="7" class="cargando">Cargando reportes...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal asignar -->
+  <div class="modal-overlay" id="modal-asignar">
+    <div class="modal">
+      <h2>Asignar Reporte</h2>
+
+      <label>Entidad gubernamental</label>
+      <select id="select-entidad"></select>
+
+      <label>Categoría del problema</label>
+      <select id="select-categoria">
+        <option value="Infraestructura vial">Infraestructura vial</option>
+        <option value="Recolección de basura">Recolección de basura</option>
+        <option value="Alumbrado público">Alumbrado público</option>
+        <option value="Espacios públicos">Espacios públicos</option>
+        <option value="Otro">Otro</option>
+      </select>
+
+      <div class="modal-btns">
+        <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn-confirmar" onclick="confirmarAsignacion()">Asignar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://reporte-ciudadano-production.up.railway.app";
+    let reporteSeleccionado = null;
+
+    // Verificar sesión
+    const sesion = JSON.parse(localStorage.getItem("sesion") || "null");
+    if (!sesion || sesion.rol !== "admin") {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("nombre-admin").textContent = sesion.nombre;
+    }
+
+    async function cargarReportes() {
+      const estado = document.getElementById("filtro-estado").value;
+      const url = estado ? `${API_URL}/admin/reportes?estado=${estado}` : `${API_URL}/admin/reportes`;
+
+      try {
+        const res = await fetch(url, {
+          headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
+        });
+        const data = await res.json();
+
+        // Stats
+        document.getElementById("stat-total").textContent = data.length;
+        document.getElementById("stat-pendiente").textContent = data.filter(r => r.estado === "Pendiente").length;
+        document.getElementById("stat-asignado").textContent = data.filter(r => r.estado === "Asignado").length;
+        document.getElementById("stat-proceso").textContent = data.filter(r => r.estado === "En proceso").length;
+        document.getElementById("stat-solucionado").textContent = data.filter(r => r.estado === "Solucionado").length;
+
+        const tbody = document.getElementById("tabla-reportes");
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="cargando">No hay reportes</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(r => `
+          <tr>
+            <td>${r.id}</td>
+            <td>${r.descripcion}</td>
+            <td>${r.ubicacion}</td>
+            <td>${new Date(r.fecha).toLocaleDateString("es-CO")}</td>
+            <td><span class="estado-badge estado-${r.estado}">${r.estado}</span></td>
+            <td>${r.entidad_nombre || '<span style="color:#aaa">Sin asignar</span>'}</td>
+            <td>
+              <button class="btn-asignar" onclick="abrirModal(${r.id})">
+                ${r.entidad_id ? "Reasignar" : "Asignar"}
+              </button>
+            </td>
+          </tr>
+        `).join("");
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function cargarEntidades() {
+      const res = await fetch(`${API_URL}/admin/entidades`, {
+        headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
+      });
+      const entidades = await res.json();
+      const select = document.getElementById("select-entidad");
+      select.innerHTML = entidades.map(e => `<option value="${e.id}">${e.nombre}</option>`).join("");
+    }
+
+    function abrirModal(reporteId) {
+      reporteSeleccionado = reporteId;
+      document.getElementById("modal-asignar").classList.add("activo");
+      cargarEntidades();
+    }
+
+    function cerrarModal() {
+      document.getElementById("modal-asignar").classList.remove("activo");
+      reporteSeleccionado = null;
+    }
+
+    async function confirmarAsignacion() {
+      const entidad_id = document.getElementById("select-entidad").value;
+      const categoria = document.getElementById("select-categoria").value;
+
+      try {
+        const res = await fetch(`${API_URL}/admin/asignar/${reporteSeleccionado}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-usuario-id": sesion.id,
+            "x-rol": sesion.rol
+          },
+          body: JSON.stringify({ entidad_id, categoria })
+        });
+
+        const data = await res.json();
+        alert(data.message);
+        cerrarModal();
+        cargarReportes();
+      } catch (err) {
+        alert("Error al asignar el reporte");
+      }
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("sesion");
+      window.location.href = "login.html";
+    }
+
+    // Iniciar
+    cargarReportes();
+  </script>
+
+</body>
+</html>
