@@ -31,8 +31,24 @@
       <p class="hint mapa-hint">O selecciona la ubicación en el mapa haciendo clic:</p>
       <div id="mapa"></div>
 
+      <!-- IMÁGENES -->
       <label style="margin-top:15px;">Imágenes</label>
-      <input type="file" id="imagenes" name="imagenes" multiple accept="image/*">
+
+      <div class="imagen-opciones">
+        <!-- Opción 1: subir archivo -->
+        <div class="opcion-img">
+          <p class="opcion-titulo">📁 Subir desde el dispositivo</p>
+          <input type="file" id="imagenes" name="imagenes" multiple accept="image/*">
+        </div>
+
+        <!-- Opción 2: tomar foto con cámara -->
+        <div class="opcion-img">
+          <p class="opcion-titulo">📷 Tomar foto con la cámara</p>
+          <button type="button" id="btnCamara" onclick="abrirCamara()">Abrir cámara</button>
+        </div>
+      </div>
+
+      <!-- Preview de todas las imágenes -->
       <div id="preview"></div>
 
       <button type="submit">Enviar Reporte</button>
@@ -71,6 +87,29 @@
       <a href="login.html">🔐 Acceso para administradores y entidades</a>
     </div>
 
+  </div>
+
+  <!-- MODAL CÁMARA -->
+  <div class="modal-overlay" id="modal-camara">
+    <div class="modal-camara">
+      <h2>📷 Tomar foto</h2>
+
+      <div id="camara-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+      </div>
+
+      <div id="foto-tomada-container" style="display:none;">
+        <img id="foto-preview" src="" alt="Foto tomada">
+      </div>
+
+      <div class="camara-btns">
+        <button type="button" id="btnTomarFoto" onclick="tomarFoto()">📸 Tomar foto</button>
+        <button type="button" id="btnRetomar" onclick="retomar()" style="display:none;">🔄 Retomar</button>
+        <button type="button" id="btnUsarFoto" onclick="usarFoto()" style="display:none;">✅ Usar esta foto</button>
+        <button type="button" onclick="cerrarCamara()">✕ Cancelar</button>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>

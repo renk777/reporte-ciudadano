@@ -33,12 +33,7 @@ label {
 
 .requerido { color: #e74c3c; }
 
-.hint {
-  font-size: 12px;
-  color: #888;
-  margin-top: 4px;
-}
-
+.hint { font-size: 12px; color: #888; margin-top: 4px; }
 .mapa-hint { margin-top: 8px; }
 
 input[type="text"],
@@ -53,15 +48,7 @@ input[type="file"] {
   font-size: 14px;
 }
 
-input[type="date"] {
-  color: #333;
-}
-
-/* Error en fecha de nacimiento */
-input.input-error {
-  border-color: #e74c3c;
-  background: #fff5f5;
-}
+input.input-error { border-color: #e74c3c; background: #fff5f5; }
 
 #ubicacion-container {
   display: flex;
@@ -70,10 +57,7 @@ input.input-error {
   margin-top: 5px;
 }
 
-#ubicacion-container input {
-  flex: 1;
-  margin-top: 0;
-}
+#ubicacion-container input { flex: 1; margin-top: 0; }
 
 #btnUbicacion {
   white-space: nowrap;
@@ -87,7 +71,6 @@ input.input-error {
   width: auto;
   margin-top: 0;
 }
-
 #btnUbicacion:hover { background: #218838; }
 #btnUbicacion:disabled { background: #aaa; cursor: not-allowed; }
 
@@ -97,6 +80,87 @@ input.input-error {
   border-radius: 10px;
   margin-top: 6px;
   border: 1px solid #ccc;
+}
+
+/* Opciones de imagen */
+.imagen-opciones {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.opcion-img {
+  flex: 1;
+  min-width: 180px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.opcion-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.opcion-img input[type="file"] {
+  margin-top: 0;
+  font-size: 13px;
+}
+
+#btnCamara {
+  width: 100%;
+  padding: 9px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 0;
+}
+#btnCamara:hover { background: #495057; }
+
+#preview {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  gap: 6px;
+}
+
+.preview-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.preview-wrapper img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: block;
+}
+
+.btn-eliminar-foto {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 button[type="submit"] {
@@ -111,36 +175,14 @@ button[type="submit"] {
   font-size: 15px;
   font-weight: 600;
 }
-
 button[type="submit"]:hover { background: #0056b3; }
 
-#preview {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
+.separador { margin: 28px 0; border: none; border-top: 1px solid #e0e0e0; }
 
-.separador {
-  margin: 28px 0;
-  border: none;
-  border-top: 1px solid #e0e0e0;
-}
+.subtitulo { font-size: 16px; color: #1a3c5e; margin-bottom: 12px; }
 
-.subtitulo {
-  font-size: 16px;
-  color: #1a3c5e;
-  margin-bottom: 12px;
-}
-
-.consulta-row {
-  display: flex;
-  gap: 8px;
-}
-
-.consulta-row input {
-  flex: 1;
-  margin-top: 0;
-}
+.consulta-row { display: flex; gap: 8px; }
+.consulta-row input { flex: 1; margin-top: 0; }
 
 .btn-consultar {
   padding: 9px 16px;
@@ -153,7 +195,6 @@ button[type="submit"]:hover { background: #0056b3; }
   white-space: nowrap;
   width: auto;
 }
-
 .btn-consultar:hover { background: #2d6a9f; }
 
 #resultado-consulta {
@@ -184,13 +225,7 @@ button[type="submit"]:hover { background: #0056b3; }
   gap: 5px;
 }
 
-.estado-badge {
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
+.estado-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
 .estado-Pendiente   { background: #fff3cd; color: #856404; }
 .estado-Asignado    { background: #cce5ff; color: #004085; }
 .estado-En-proceso  { background: #d4edda; color: #155724; }
@@ -207,19 +242,80 @@ button[type="submit"]:hover { background: #0056b3; }
   border-radius: 8px;
 }
 
-.link-admin {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.link-admin a {
-  font-size: 13px;
-  color: #888;
-  text-decoration: none;
-}
-
+.link-admin { text-align: center; margin-top: 20px; }
+.link-admin a { font-size: 13px; color: #888; text-decoration: none; }
 .link-admin a:hover { color: #1a3c5e; }
+
+/* ── MODAL CÁMARA ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.activo { display: flex; }
+
+.modal-camara {
+  background: white;
+  border-radius: 14px;
+  padding: 24px;
+  width: 440px;
+  max-width: 95%;
+  text-align: center;
+}
+
+.modal-camara h2 { font-size: 18px; color: #1a3c5e; margin-bottom: 16px; }
+
+#video {
+  width: 100%;
+  border-radius: 10px;
+  background: #000;
+  max-height: 320px;
+}
+
+#foto-preview {
+  width: 100%;
+  border-radius: 10px;
+  max-height: 320px;
+  object-fit: cover;
+}
+
+.camara-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.camara-btns button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  width: auto;
+  margin-top: 0;
+}
+
+#btnTomarFoto { background: #007BFF; color: white; }
+#btnTomarFoto:hover { background: #0056b3; }
+
+#btnRetomar { background: #ffc107; color: #333; }
+#btnRetomar:hover { background: #e0a800; }
+
+#btnUsarFoto { background: #28a745; color: white; }
+#btnUsarFoto:hover { background: #218838; }
+
+.camara-btns button:last-child { background: #eee; color: #333; }
+.camara-btns button:last-child:hover { background: #ddd; }
 
 @media (max-width: 520px) {
   .container { width: 95%; margin: 20px auto; }
+  .imagen-opciones { flex-direction: column; }
 }
