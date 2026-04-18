@@ -15,7 +15,7 @@ exports.crearReporte = (req, res) => {
     const reporteId = result.insertId;
 
     if (imagenes && imagenes.length > 0) {
-      const valores = imagenes.map(img => [reporteId, img.path]);
+      const valores = imagenes.map(img => [reporteId, img.originalname]);
       const sqlImagenes = "INSERT INTO imagenes (reporte_id, ruta) VALUES ?";
 
       pool.query(sqlImagenes, [valores], (err2) => {
