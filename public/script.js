@@ -8,10 +8,10 @@ const API_URL = "https://reporte-ciudadano-production.up.railway.app";
 const MONTERIA_LAT = 8.7479;
 const MONTERIA_LNG = -75.8814;
 
-// Arreglo con todas las imágenes (archivos + fotos de cámara)
+// Array con todas las imagenes (archivos + fotos de camara)
 let todasLasImagenes = [];
 
-// ── MAPA ──────────────────────────────────────────
+
 const mapa = L.map('mapa').setView([MONTERIA_LAT, MONTERIA_LNG], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
@@ -64,7 +64,7 @@ window.addEventListener("load", () => {
   document.getElementById("fechaNacimiento").setAttribute("max", hoy);
 });
 
-// ── PREVIEW ───────────────────────────────────────
+
 function agregarAlPreview(file, nombre) {
   const id = Date.now() + Math.random();
   todasLasImagenes.push({ id, file, nombre });
@@ -97,10 +97,10 @@ inputImagenes.addEventListener("change", () => {
     if (!file.type.startsWith("image/")) continue;
     agregarAlPreview(file, file.name);
   }
-  inputImagenes.value = ""; // reset para poder subir más
+  inputImagenes.value = ""; // reset para poder subir mas
 });
 
-// ── CÁMARA ────────────────────────────────────────
+// CAMARA
 let streamCamara = null;
 let fotoBlob = null;
 
@@ -115,7 +115,7 @@ async function abrirCamara() {
 
   try {
     streamCamara = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" }, // cámara trasera en móvil
+      video: { facingMode: "environment" }, // camara trasera en cel
       audio: false
     });
     document.getElementById("video").srcObject = streamCamara;
@@ -138,14 +138,14 @@ function tomarFoto() {
     const fotoURL = URL.createObjectURL(blob);
     document.getElementById("foto-preview").src = fotoURL;
 
-    // Mostrar vista previa
+    // Vista previa
     document.getElementById("camara-container").style.display = "none";
     document.getElementById("foto-tomada-container").style.display = "block";
     document.getElementById("btnTomarFoto").style.display = "none";
     document.getElementById("btnRetomar").style.display = "inline-block";
     document.getElementById("btnUsarFoto").style.display = "inline-block";
 
-    // Detener cámara
+    // Detener camara
     if (streamCamara) streamCamara.getTracks().forEach(t => t.stop());
   }, "image/jpeg", 0.9);
 }
@@ -182,7 +182,7 @@ function cerrarCamara() {
   document.getElementById("video").srcObject = null;
 }
 
-// ── VALIDAR EDAD ──────────────────────────────────
+
 function esMayorDeEdad(fechaNacimiento) {
   const hoy = new Date();
   const nacimiento = new Date(fechaNacimiento);
@@ -191,7 +191,7 @@ function esMayorDeEdad(fechaNacimiento) {
   return edad > 18 || (edad === 18 && hoy >= cumpleEsteAno);
 }
 
-// ── ENVIAR REPORTE ────────────────────────────────
+// ENVIAR REPORTE
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -224,7 +224,7 @@ form.addEventListener("submit", async (e) => {
   formData.append("descripcion", descripcion);
   formData.append("ubicacion", ubicacion);
 
-  // Agregar todas las imágenes (de archivo y de cámara)
+  // Agregar todas las imagenes
   todasLasImagenes.forEach(item => {
     formData.append("imagenes", item.file, item.nombre);
   });
@@ -248,7 +248,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ── CONSULTAR ESTADO ──────────────────────────────
+// CONSULTAR ESTADO
 async function consultarEstado() {
   const id = document.getElementById("inputReporteId").value.trim();
   const resultadoDiv = document.getElementById("resultado-consulta");

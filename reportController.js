@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Subir buffer a Cloudinary
+// Subir buffer a Cloudinary(El buffer es basicamente la imagen guardada temporalmente en la memoria RAM del servidor)
 function subirACloudinary(buffer, nombreArchivo) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(

@@ -82,7 +82,7 @@ input.input-error { border-color: #e74c3c; background: #fff5f5; }
   border: 1px solid #ccc;
 }
 
-/* Opciones de imagen */
+
 .imagen-opciones {
   display: flex;
   gap: 12px;
@@ -246,7 +246,7 @@ button[type="submit"]:hover { background: #0056b3; }
 .link-admin a { font-size: 13px; color: #888; text-decoration: none; }
 .link-admin a:hover { color: #1a3c5e; }
 
-/* ── MODAL CÁMARA ── */
+
 .modal-overlay {
   display: none;
   position: fixed;

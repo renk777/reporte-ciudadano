@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 const pool = require('./db');
 
 function verificarRol(rolRequerido) {
@@ -12,14 +13,31 @@ function verificarRol(rolRequerido) {
   };
 }
 
-// RF07: Login
+// RF07: Login con bcrypt(bcrypt l genera un hash para proteger las contraseñas, es como cifrarlas pero con la diferencia de que no se puede revertir)
 router.post('/login', (req, res) => {
   const { usuario, password } = req.body;
-  const sql = "SELECT id, nombre, usuario, rol FROM usuarios WHERE usuario = ? AND password = ?";
-  pool.query(sql, [usuario, password], (err, results) => {
+
+  const sql = "SELECT id, nombre, usuario, password, rol FROM usuarios WHERE usuario = ?";
+  pool.query(sql, [usuario], async (err, results) => {
     if (err) return res.status(500).json({ success: false, message: "Error del servidor" });
-    if (results.length === 0) return res.json({ success: false, message: "Credenciales incorrectas" });
-    return res.json({ success: true, user: results[0] });
+
+    if (results.length === 0) {
+      return res.json({ success: false, message: "Credenciales incorrectas" });
+    }
+
+    const user = results[0];
+
+    // Comparar contraseña con el hash
+    const coincide = await bcrypt.compare(password, user.password);
+    if (!coincide) {
+      return res.json({ success: false, message: "Credenciales incorrectas" });
+    }
+
+    // No enviar el hash al cliente
+    return res.json({
+      success: true,
+      user: { id: user.id, nombre: user.nombre, usuario: user.usuario, rol: user.rol }
+    });
   });
 });
 
@@ -41,7 +59,7 @@ router.get('/admin/reportes', verificarRol('admin'), (req, res) => {
   });
 });
 
-// Obtener imágenes de un reporte
+// Obtener imagenes de un reporte (admin)
 router.get('/admin/reportes/:id/imagenes', verificarRol('admin'), (req, res) => {
   const { id } = req.params;
   pool.query("SELECT ruta FROM imagenes WHERE reporte_id = ?", [id], (err, results) => {
@@ -78,10 +96,9 @@ router.get('/entidad/reportes', verificarRol('entidad'), (req, res) => {
   });
 });
 
-// Obtener imágenes de un reporte para entidad
+// Obtener imagenes de un reporte (entidad)
 router.get('/entidad/reportes/:id/imagenes', verificarRol('entidad'), (req, res) => {
   const { id } = req.params;
-  const entidad_id = req.headers['x-usuario-id'];
   pool.query("SELECT ruta FROM imagenes WHERE reporte_id = ?", [id], (err, results) => {
     if (err) return res.status(500).json({ message: "Error del servidor" });
     res.json(results);
@@ -108,7 +125,7 @@ router.put('/entidad/estado/:id', verificarRol('entidad'), (req, res) => {
   });
 });
 
-// RF10: Consultar estado público
+// RF10: Consultar estado publico
 router.get('/reporte/estado/:id', (req, res) => {
   const { id } = req.params;
   const sql = `
