@@ -16,7 +16,7 @@ function verificarRol(rolRequerido) {
 // RF07: Login con bcrypt(bcrypt l genera un hash para proteger las contraseñas, es como cifrarlas pero con la diferencia de que no se puede revertir)
 router.post('/login', (req, res) => {
   const { usuario, password } = req.body;
-
+console.log("Intento de login:", usuario);
   const sql = "SELECT id, nombre, usuario, password, rol FROM usuarios WHERE usuario = ?";
   pool.query(sql, [usuario], async (err, results) => {
     if (err) return res.status(500).json({ success: false, message: "Error del servidor" });
