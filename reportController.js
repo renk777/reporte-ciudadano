@@ -8,11 +8,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Subir buffer a Cloudinary(El buffer es basicamente la imagen guardada temporalmente en la memoria RAM del servidor)
 function subirACloudinary(buffer, nombreArchivo) {
+  // Quitar extensión para que Cloudinary no la duplique
+  const nombreSinExt = nombreArchivo.replace(/\.[^/.]+$/, "");
+
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'reportes_ciudadanos', public_id: Date.now() + '-' + nombreArchivo },
+      {
+        folder: 'reportes_ciudadanos',
+        public_id: Date.now() + '-' + nombreSinExt
+      },
       (error, result) => {
         if (error) reject(error);
         else resolve(result.secure_url);
@@ -38,7 +43,6 @@ exports.crearReporte = async (req, res) => {
 
     if (imagenes && imagenes.length > 0) {
       try {
-        // Subir cada imagen a Cloudinary
         const urls = await Promise.all(
           imagenes.map(img => subirACloudinary(img.buffer, img.originalname))
         );

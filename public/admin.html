@@ -440,6 +440,12 @@
     if (id === "modal-asignar") reporteSeleccionado = null;
   }
 
+  function cerrarModalFotosClick(event) {
+    if (event.target === document.getElementById("modal-fotos")) {
+      cerrarModal("modal-fotos");
+    }
+  }
+
   async function confirmarAsignacion() {
     const entidad_id = document.getElementById("select-entidad").value;
     const categoria = document.getElementById("select-categoria").value;
