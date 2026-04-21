@@ -5,9 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Administrador - Reporte Ciudadano</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0;}
+    img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 
     body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+
+    body {
+       background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp); background-position: center; background-size: cover; background-repeat: no-repeat;
+    }
 
     header {
       background: #1a3c5e;
@@ -18,8 +27,15 @@
       align-items: center;
     }
 
-    header h1 { font-size: 18px; }
-    header span { font-size: 14px; opacity: 0.8; }
+    img {
+      display: flex;
+      max-width: 7%;  
+      height: 7%;    
+      margin-left: 950px; 
+    }
+
+    header h1 { font-size: 18px;}
+    header span { font-size: 14px; opacity: 0.8; margin-left: 20px;}
 
     .btn-cerrar {
       background: rgba(255,255,255,0.2);
@@ -30,7 +46,7 @@
       cursor: pointer;
       font-size: 13px;
     }
-    .btn-cerrar:hover { background: rgba(255,255,255,0.3); }
+    .btn-cerrar:hover { background: rgba(212, 104, 104, 0.3); }
 
     .stats {
       display: flex;
@@ -218,12 +234,16 @@
     }
   </style>
 </head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <body>
 
 <header>
   <div>
     <h1>🏛️ Panel Administrador</h1>
     <span id="nombre-admin"></span>
+  </div>
+  <div class="logofin">
+    <img src="logov2.png">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>

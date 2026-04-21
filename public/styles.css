@@ -1,19 +1,54 @@
 * { box-sizing: border-box; }
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+    .container2 {
+      width: auto;
+      margin-left: -10px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+}
 
 body {
   font-family: Arial, sans-serif;
   background: #f4f4f4;
   margin: 0;
-  padding: 0;
+  padding: px;
+  background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+  background-size: cover;
+  background-repeat: repeat-y;
+  background-position: center;
+}
+
+body {
+    display: flex;
+    justify-content: space-between; 
+    align-items: flex-start;       
+    padding: 40px;                 
+    margin: 0;
 }
 
 .container {
-  width: 480px;
-  margin: 40px auto;
-  padding: 24px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    width: 480px;
+    margin: 0; 
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.container2 {
+    width: 450px;
+    margin: 0; 
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 
 h1 {
@@ -33,7 +68,7 @@ label {
 
 .requerido { color: #e74c3c; }
 
-.hint { font-size: 12px; color: #888; margin-top: 4px; }
+.hint { font-size: 12px; color: #5a5a5a; margin-top: 4px; }
 .mapa-hint { margin-top: 8px; }
 
 input[type="text"],
@@ -62,7 +97,7 @@ input.input-error { border-color: #e74c3c; background: #fff5f5; }
 #btnUbicacion {
   white-space: nowrap;
   padding: 9px 12px;
-  background: #28a745;
+  background: rgba(0,0,0,0.5);
   color: white;
   border: none;
   border-radius: 8px;
@@ -71,7 +106,7 @@ input.input-error { border-color: #e74c3c; background: #fff5f5; }
   width: auto;
   margin-top: 0;
 }
-#btnUbicacion:hover { background: #218838; }
+#btnUbicacion:hover { background: rgba(0,0,0,0.7); }
 #btnUbicacion:disabled { background: #aaa; cursor: not-allowed; }
 
 #mapa {
@@ -186,7 +221,7 @@ button[type="submit"]:hover { background: #0056b3; }
 
 .btn-consultar {
   padding: 9px 16px;
-  background: #1a3c5e;
+  background: rgba(0,0,0,0.5);
   color: white;
   border: none;
   border-radius: 8px;
@@ -195,7 +230,7 @@ button[type="submit"]:hover { background: #0056b3; }
   white-space: nowrap;
   width: auto;
 }
-.btn-consultar:hover { background: #2d6a9f; }
+.btn-consultar:hover { background: rgba(0,0,0,0.5); }
 
 #resultado-consulta {
   display: none;

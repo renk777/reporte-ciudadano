@@ -9,6 +9,8 @@
 
     body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
 
+    body { background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp); background-position: center; background-size: cover; background-repeat: no-repeat;}
+
     header {
       background: #1a5e3a;
       color: white;
@@ -16,6 +18,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    img {
+      display: flex;
+      max-width: 7%;  
+      height: 7%;    
+      margin-left: 1100px; 
     }
 
     header h1 { font-size: 18px; }
@@ -138,7 +147,7 @@
       overflow-y: auto;
     }
 
-    .modal h2 { font-size: 18px; color: #1a5e3a; margin-bottom: 16px; }
+    .modal h2 { font-size: 18px; color: #0acb67; margin-bottom: 16px; }
 
     .fotos-grid {
       display: grid;
@@ -202,6 +211,10 @@
   <div>
     <h1>🏢 Panel Entidad Gubernamental</h1>
     <span id="nombre-entidad"></span>
+  </div>
+    </div>
+    <div class="logofin">
+    <img src="logov2.png">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
