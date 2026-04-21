@@ -9,7 +9,13 @@
 
     body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
 
-    body { background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp); background-position: center; background-size: cover; background-repeat: no-repeat;}
+    body {
+      background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
 
     header {
       background: #1a5e3a;
@@ -23,7 +29,7 @@
     }
 
     .logo-header {
-      height: 38px;
+      height: 36px;
       width: auto;
       display: block;
       flex-shrink: 0;
@@ -214,7 +220,7 @@
     <h1>🏢 Panel Entidad Gubernamental</h1>
     <span id="nombre-entidad"></span>
   </div>
-  <div class="logofin" style="flex-shrink:0;margin:0 10px;">
+  <div style="flex-shrink:0;margin:0 8px;">
     <img src="logov2.png" class="logo-header">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
@@ -248,11 +254,11 @@
 </div>
 
 
-<div class="modal-overlay" id="modal-fotos">
-  <div class="modal">
-    <h2>📷 Imágenes del reporte</h2>
-    <div id="fotos-contenido"></div>
-    <button class="btn-cancelar" onclick="cerrarModalFotos()">Cerrar</button>
+<div class="modal-overlay" id="modal-fotos" onclick="cerrarModalFotosClick(event)">
+  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:750px;max-width:95%;">
+    <h2 style="font-size:18px;color:#0acb67;margin-bottom:12px;flex-shrink:0;">📷 Imágenes del reporte</h2>
+    <div id="fotos-contenido" style="flex:1;overflow-y:auto;"></div>
+    <button class="btn-cancelar" style="flex-shrink:0;margin-top:16px;" onclick="cerrarModalFotos()">Cerrar</button>
   </div>
 </div>
 
@@ -353,9 +359,12 @@
       }
 
       contenido.innerHTML = `
-        <div class="fotos-grid">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:4px;">
           ${imagenes.map(img => `
-            <img src="${img.ruta}" alt="Imagen del reporte" onclick="abrirLightbox('${img.ruta}')">
+            <div style="background:#f0f0f0;border-radius:8px;overflow:hidden;cursor:pointer;" onclick="abrirLightbox('${img.ruta}')">
+              <img src="${img.ruta}" alt="Imagen" style="width:100%;height:220px;object-fit:contain;display:block;"
+                onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#aaa;text-align:center>No disponible</p>'">
+            </div>
           `).join("")}
         </div>
       `;
