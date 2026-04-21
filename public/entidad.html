@@ -20,11 +20,10 @@
       align-items: center;
     }
 
-    img {
-      display: flex;
-      max-width: 7%;  
-      height: 7%;    
-      margin-left: 1100px; 
+    .logo-header {
+      height: 45px;
+      width: auto;
+      object-fit: contain;
     }
 
     header h1 { font-size: 18px; }
@@ -141,8 +140,8 @@
       background: white;
       border-radius: 12px;
       padding: 30px;
-      width: 700px;
-      max-width: 95%;
+      width: 480px;
+      max-width: 90%;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -214,7 +213,7 @@
   </div>
     </div>
     <div class="logofin">
-    <img src="logov2.png">
+    <img src="logov2.png" class="logo-header">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
@@ -248,7 +247,7 @@
 
 
 <div class="modal-overlay" id="modal-fotos" onclick="cerrarModalFotosClick(event)">
-  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:700px;max-width:95%;">
+  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:750px;max-width:95%;">
     <h2 style="font-size:18px;color:#0acb67;margin-bottom:12px;flex-shrink:0;">📷 Imágenes del reporte</h2>
     <div id="fotos-contenido" style="flex:1;overflow-y:auto;"></div>
     <button class="btn-cancelar" style="flex-shrink:0;margin-top:16px;" onclick="cerrarModalFotos()">Cerrar</button>
@@ -355,8 +354,7 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:4px;">
           ${imagenes.map(img => `
             <div style="background:#f0f0f0;border-radius:8px;overflow:hidden;cursor:pointer;" onclick="abrirLightbox('${img.ruta}')">
-              <img src="${img.ruta}" alt="Imagen del reporte"
-                style="width:100%;height:220px;object-fit:contain;display:block;">
+              <img src="${img.ruta}" alt="Imagen del reporte" style="width:100%;height:220px;object-fit:contain;display:block;" onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#aaa;text-align:center>Imagen no disponible</p>'">
             </div>
           `).join("")}
         </div>
@@ -377,12 +375,6 @@
 
   function cerrarModalFotos() {
     document.getElementById("modal-fotos").classList.remove("activo");
-  }
-
-  function cerrarModalFotosClick(event) {
-    if (event.target === document.getElementById("modal-fotos")) {
-      cerrarModalFotos();
-    }
   }
 
   function cerrarSesion() {

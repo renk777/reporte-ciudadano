@@ -27,11 +27,10 @@
       align-items: center;
     }
 
-    img {
-      display: flex;
-      max-width: 7%;  
-      height: 7%;    
-      margin-left: 950px; 
+    .logo-header {
+      height: 45px;
+      width: auto;
+      object-fit: contain;
     }
 
     header h1 { font-size: 18px;}
@@ -121,17 +120,6 @@
       font-size: 12px;
     }
     .btn-fotos:hover { background: #495057; }
-
-    .btn-eliminar {
-      background: #dc3545;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .btn-eliminar:hover { background: #b02a37; }
 
     .cargando { text-align: center; padding: 40px; color: #666; }
 
@@ -254,7 +242,7 @@
     <span id="nombre-admin"></span>
   </div>
   <div class="logofin">
-    <img src="logov2.png">
+    <img src="logov2.png" class="logo-header">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
@@ -427,8 +415,7 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:4px;">
           ${imagenes.map(img => `
             <div style="background:#f0f0f0;border-radius:8px;overflow:hidden;cursor:pointer;" onclick="abrirLightbox('${img.ruta}')">
-              <img src="${img.ruta}" alt="Imagen del reporte"
-                style="width:100%;height:220px;object-fit:contain;display:block;">
+              <img src="${img.ruta}" alt="Imagen del reporte" style="width:100%;height:220px;object-fit:contain;display:block;" onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#aaa;text-align:center>Imagen no disponible</p>'">
             </div>
           `).join("")}
         </div>
@@ -472,27 +459,6 @@
       cargarReportes();
     } catch (err) {
       alert("Error al asignar el reporte");
-    }
-  }
-
-  function cerrarModalFotosClick(event) {
-    if (event.target === document.getElementById("modal-fotos")) {
-      cerrarModal("modal-fotos");
-    }
-  }
-
-  async function eliminarReporte(reporteId) {
-    if (!confirm(`¿Estás seguro de que deseas eliminar el reporte #${reporteId}? Esta acción no se puede deshacer.`)) return;
-    try {
-      const res = await fetch(`${API_URL}/admin/eliminar/${reporteId}`, {
-        method: "DELETE",
-        headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
-      });
-      const data = await res.json();
-      alert(data.message);
-      cargarReportes();
-    } catch (err) {
-      alert("Error al eliminar el reporte");
     }
   }
 
