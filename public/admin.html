@@ -307,11 +307,11 @@
 </div>
 
 
-<div class="modal-overlay" id="modal-fotos">
-  <div class="modal">
-    <h2>📷 Imágenes del reporte</h2>
-    <div id="fotos-contenido"></div>
-    <div class="modal-btns">
+<div class="modal-overlay" id="modal-fotos" onclick="cerrarModalFotosClick(event)">
+  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:700px;max-width:95%;">
+    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:12px;flex-shrink:0;">📷 Imágenes del reporte</h2>
+    <div id="fotos-contenido" style="flex:1;overflow-y:auto;"></div>
+    <div class="modal-btns" style="flex-shrink:0;padding-top:16px;">
       <button class="btn-cancelar" onclick="cerrarModal('modal-fotos')">Cerrar</button>
     </div>
   </div>
@@ -412,9 +412,12 @@
       }
 
       contenido.innerHTML = `
-        <div class="fotos-grid">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:4px;">
           ${imagenes.map(img => `
-            <img src="${img.ruta}" alt="Imagen del reporte" onclick="abrirLightbox('${img.ruta}')">
+            <div style="background:#f0f0f0;border-radius:8px;overflow:hidden;cursor:pointer;" onclick="abrirLightbox('${img.ruta}')">
+              <img src="${img.ruta}" alt="Imagen del reporte"
+                style="width:100%;height:220px;object-fit:contain;display:block;">
+            </div>
           `).join("")}
         </div>
       `;
