@@ -14,17 +14,19 @@
     header {
       background: #1a5e3a;
       color: white;
-      padding: 16px 30px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    img {
-      display: flex;
-      max-width: 7%;  
-      height: 7%;    
-      margin-left: 1100px; 
+    .logo-header {
+      height: 38px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
     }
 
     header h1 { font-size: 18px; }
@@ -207,13 +209,13 @@
 </head>
 <body>
 
-<header style="width:100%;box-sizing:border-box;">
-  <div style="flex:1;">
+<header>
+  <div style="flex:1;min-width:0;">
     <h1>🏢 Panel Entidad Gubernamental</h1>
     <span id="nombre-entidad"></span>
   </div>
-  <div class="logofin">
-    <img src="logov2.png" style="height:36px;width:auto;">
+  <div class="logofin" style="flex-shrink:0;margin:0 10px;">
+    <img src="logov2.png" class="logo-header">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
