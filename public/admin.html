@@ -27,10 +27,11 @@
       align-items: center;
     }
 
-    .logo-header {
-      height: 45px;
-      width: auto;
-      object-fit: contain;
+    img {
+      display: flex;
+      max-width: 7%;  
+      height: 7%;    
+      margin-left: 950px; 
     }
 
     header h1 { font-size: 18px;}
@@ -121,6 +122,17 @@
     }
     .btn-fotos:hover { background: #495057; }
 
+    .btn-eliminar {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-eliminar:hover { background: #b02a37; }
+
     .cargando { text-align: center; padding: 40px; color: #666; }
 
     
@@ -141,7 +153,7 @@
       border-radius: 12px;
       padding: 30px;
       width: 750px;
-      max-width: 95%;
+      max-width: 90%;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -242,7 +254,7 @@
     <span id="nombre-admin"></span>
   </div>
   <div class="logofin">
-    <img src="logov2.png" class="logo-header">
+    <img src="logov2.png">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
@@ -415,7 +427,8 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:4px;">
           ${imagenes.map(img => `
             <div style="background:#f0f0f0;border-radius:8px;overflow:hidden;cursor:pointer;" onclick="abrirLightbox('${img.ruta}')">
-              <img src="${img.ruta}" alt="Imagen del reporte" style="width:100%;height:220px;object-fit:contain;display:block;" onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#aaa;text-align:center>Imagen no disponible</p>'">
+              <img src="${img.ruta}" alt="Imagen" style="width:100%;height:220px;object-fit:contain;display:block;"
+                onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#aaa;text-align:center>No disponible</p>'">
             </div>
           `).join("")}
         </div>
