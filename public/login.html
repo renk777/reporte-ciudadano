@@ -32,7 +32,7 @@
     }
 
     .login-box {
-      background: white;
+      background: rgba(255, 255, 255, 0.8);
       border-radius: 16px;
       padding: 40px;
       width: 380px;
@@ -134,9 +134,6 @@
     <img src="logov2.png">
     <span>Login para administradores y entidades</span>
   </div>
-
-</header>
-
 </header>
 
     <label>Usuario</label>
@@ -178,10 +175,10 @@
         const data = await res.json();
 
         if (data.success) {
-          // Guardar sesión en localStorage
+          // Guardar sesion en localStorage
           localStorage.setItem("sesion", JSON.stringify(data.user));
 
-          // Redirigir según el rol
+          // Redirigir segun el rol
           if (data.user.rol === "admin") {
             window.location.href = "admin.html";
           } else {
@@ -197,7 +194,7 @@
       }
     }
 
-    // Enter para iniciar sesión
+    // Enter para iniciar sesion
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter") iniciarSesion();
     });
