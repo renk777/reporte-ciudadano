@@ -141,8 +141,8 @@
       background: white;
       border-radius: 12px;
       padding: 30px;
-      width: 420px;
-      max-width: 90%;
+      width: 700px;
+      max-width: 95%;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -192,50 +192,23 @@
     
     .fotos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
       margin-top: 16px;
     }
 
     .fotos-grid img {
       width: 100%;
-      height: 160px;
+      height: 140px;
       object-fit: cover;
       border-radius: 8px;
       cursor: pointer;
       transition: transform 0.2s;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      display: block;
     }
     .fotos-grid img:hover { transform: scale(1.03); }
 
     .sin-fotos { text-align: center; color: #aaa; padding: 20px; font-size: 14px; }
-
-    .modal-fotos-inner {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .modal-fotos-inner h2 {
-      font-size: 18px;
-      color: #1a3c5e;
-      margin-bottom: 12px;
-      flex-shrink: 0;
-    }
-
-    .fotos-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .fotos-footer {
-      flex-shrink: 0;
-      padding-top: 16px;
-      display: flex;
-      gap: 10px;
-    }
 
     
     .lightbox {
@@ -334,11 +307,11 @@
 </div>
 
 
-<div class="modal-overlay" id="modal-fotos" onclick="cerrarModalFotosClick(event)">
-  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;">
-    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:12px;flex-shrink:0;">📷 Imágenes del reporte</h2>
-    <div id="fotos-contenido" style="flex:1;overflow-y:auto;padding-right:4px;"></div>
-    <div class="modal-btns" style="flex-shrink:0;padding-top:16px;">
+<div class="modal-overlay" id="modal-fotos">
+  <div class="modal">
+    <h2>📷 Imágenes del reporte</h2>
+    <div id="fotos-contenido"></div>
+    <div class="modal-btns">
       <button class="btn-cancelar" onclick="cerrarModal('modal-fotos')">Cerrar</button>
     </div>
   </div>
@@ -484,12 +457,6 @@
       cargarReportes();
     } catch (err) {
       alert("Error al asignar el reporte");
-    }
-  }
-
-  function cerrarModalFotosClick(event) {
-    if (event.target === document.getElementById("modal-fotos")) {
-      cerrarModal("modal-fotos");
     }
   }
 
