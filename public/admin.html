@@ -11,21 +11,22 @@
   height: auto;
   display: block;
 }
-    .logo-header {
-      height: 36px !important;
-      width: auto !important;
-      max-width: none !important;
-      flex-shrink: 0;
-    }
 
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; padding-top: 70px; }
 
     body {
-       background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
-       background-position: center;
-       background-size: cover;
-       background-repeat: no-repeat;
-       background-attachment: fixed;
+      background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+    html {
+      min-height: 100%;
+      background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+      background-position: center;
+      background-size: cover;
+      background-attachment: fixed;
     }
 
     header {
@@ -35,16 +36,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
       width: 100%;
+      z-index: 999;
       box-sizing: border-box;
     }
 
-    .logo-header {
-      height: 36px;
-      width: auto;
-      display: block;
-      flex-shrink: 0;
-    }
+    .logo-header { height: 34px; width: auto; }
 
     header h1 { font-size: 18px;}
     header span { font-size: 14px; opacity: 0.8; margin-left: 20px;}
@@ -153,7 +154,7 @@
       background: white;
       border-radius: 12px;
       padding: 30px;
-      width: 750px;
+      width: 420px;
       max-width: 90%;
       max-height: 90vh;
       overflow-y: auto;
@@ -251,12 +252,10 @@
 
 <header>
   <div style="flex:1;min-width:0;">
-    <h1>🏛️ Panel Administrador</h1>
-    <span id="nombre-admin"></span>
+    <h1 style="font-size:16px;">🏛️ Panel Administrador</h1>
+    <span id="nombre-admin" style="font-size:12px;opacity:0.8;"></span>
   </div>
-  <div style="flex-shrink:0;margin:0 8px;">
-    <img src="logov2.png" class="logo-header">
-  </div>
+  <img src="logov2.png" style="height:32px;width:auto;margin:0 10px;flex-shrink:0;">
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
 
@@ -320,7 +319,7 @@
 
 
 <div class="modal-overlay" id="modal-fotos" onclick="cerrarModalFotosClick(event)">
-  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;">
+  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:750px;max-width:95%;">
     <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:12px;flex-shrink:0;">📷 Imágenes del reporte</h2>
     <div id="fotos-contenido" style="flex:1;overflow-y:auto;"></div>
     <div class="modal-btns" style="flex-shrink:0;padding-top:16px;">
