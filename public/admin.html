@@ -122,6 +122,17 @@
     }
     .btn-fotos:hover { background: #495057; }
 
+    .btn-eliminar {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-eliminar:hover { background: #b02a37; }
+
     .cargando { text-align: center; padding: 40px; color: #666; }
 
     
@@ -141,8 +152,8 @@
       background: white;
       border-radius: 12px;
       padding: 30px;
-      width: 700px;
-      max-width: 95%;
+      width: 420px;
+      max-width: 90%;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -307,11 +318,11 @@
 </div>
 
 
-<div class="modal-overlay" id="modal-fotos" onclick="cerrarModalFotosClick(event)">
-  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:700px;max-width:95%;">
-    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:12px;flex-shrink:0;">📷 Imágenes del reporte</h2>
-    <div id="fotos-contenido" style="flex:1;overflow-y:auto;"></div>
-    <div class="modal-btns" style="flex-shrink:0;padding-top:16px;">
+<div class="modal-overlay" id="modal-fotos">
+  <div class="modal">
+    <h2>📷 Imágenes del reporte</h2>
+    <div id="fotos-contenido"></div>
+    <div class="modal-btns">
       <button class="btn-cancelar" onclick="cerrarModal('modal-fotos')">Cerrar</button>
     </div>
   </div>
@@ -370,6 +381,7 @@
                 ${r.entidad_id ? "Reasignar" : "Asignar"}
               </button>
               <button class="btn-fotos" onclick="verFotos(${r.id})">📷 Fotos</button>
+              <button class="btn-eliminar" onclick="eliminarReporte(${r.id})">🗑️ Eliminar</button>
             </div>
           </td>
         </tr>
@@ -412,12 +424,9 @@
       }
 
       contenido.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:4px;">
+        <div class="fotos-grid">
           ${imagenes.map(img => `
-            <div style="background:#f0f0f0;border-radius:8px;overflow:hidden;cursor:pointer;" onclick="abrirLightbox('${img.ruta}')">
-              <img src="${img.ruta}" alt="Imagen del reporte"
-                style="width:100%;height:220px;object-fit:contain;display:block;">
-            </div>
+            <img src="${img.ruta}" alt="Imagen del reporte" onclick="abrirLightbox('${img.ruta}')">
           `).join("")}
         </div>
       `;
@@ -440,12 +449,6 @@
     if (id === "modal-asignar") reporteSeleccionado = null;
   }
 
-  function cerrarModalFotosClick(event) {
-    if (event.target === document.getElementById("modal-fotos")) {
-      cerrarModal("modal-fotos");
-    }
-  }
-
   async function confirmarAsignacion() {
     const entidad_id = document.getElementById("select-entidad").value;
     const categoria = document.getElementById("select-categoria").value;
@@ -466,6 +469,22 @@
       cargarReportes();
     } catch (err) {
       alert("Error al asignar el reporte");
+    }
+  }
+
+  async function eliminarReporte(reporteId) {
+    if (!confirm(`¿Estás seguro de que deseas eliminar el reporte #${reporteId}? Esta acción no se puede deshacer.`)) return;
+
+    try {
+      const res = await fetch(`${API_URL}/admin/eliminar/${reporteId}`, {
+        method: "DELETE",
+        headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
+      });
+      const data = await res.json();
+      alert(data.message);
+      cargarReportes();
+    } catch (err) {
+      alert("Error al eliminar el reporte");
     }
   }
 
