@@ -1,17 +1,25 @@
 * { box-sizing: border-box; }
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
   body {
-    flex-direction: column;
-    .container2 {
-      width: auto;
-      margin-left: -10px;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 16px !important;
   }
+  .container { width: 100% !important; margin: 0 !important; }
+  .container2 { width: 100% !important; margin: 0 0 16px 0 !important; }
+  .container2 img { max-width: 80%; height: auto; margin: 0 auto; }
+  #ubicacion-container { flex-direction: column; align-items: stretch; }
+  #btnUbicacion { width: 100% !important; margin-top: 8px; }
+  .imagen-opciones { flex-direction: column; }
+  .consulta-row { flex-direction: column; }
+  .btn-consultar { width: 100%; }
+}
+@media (max-width: 480px) {
+  .container { padding: 16px !important; }
+  h1 { font-size: 17px; }
+  #mapa { height: 220px; }
 }
 
 body {
