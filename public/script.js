@@ -1,67 +1,265 @@
 const form = document.getElementById("formReporte");
 const inputImagenes = document.getElementById("imagenes");
 const preview = document.getElementById("preview");
+const inputUbicacion = document.getElementById("ubicacion");
+const btnUbicacion = document.getElementById("btnUbicacion");
 
-inputImagenes.addEventListener("change", () => {
-  preview.innerHTML = "";
+const API_URL = "https://reporte-ciudadano-production.up.railway.app";
 
-  const archivos = inputImagenes.files;
+const MONTERIA_LAT = 8.7479;
+const MONTERIA_LNG = -75.8814;
 
-  if (!archivos || archivos.length === 0) {
-    preview.innerHTML = "<p>No seleccionaste imágenes</p>";
+// Arreglo con todas las imágenes
+let todasLasImagenes = [];
+
+// ── MAPA ──────────────────────────────────────────
+const mapa = L.map('mapa').setView([MONTERIA_LAT, MONTERIA_LNG], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(mapa);
+
+let marcador = null;
+
+function ponerMarcador(lat, lng) {
+  if (marcador) mapa.removeLayer(marcador);
+  marcador = L.marker([lat, lng]).addTo(mapa);
+  inputUbicacion.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+}
+
+mapa.on('click', (e) => ponerMarcador(e.latlng.lat, e.latlng.lng));
+
+btnUbicacion.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    alert("Tu navegador no soporta geolocalización.");
     return;
   }
+  btnUbicacion.textContent = "Obteniendo...";
+  btnUbicacion.disabled = true;
 
-  for (let i = 0; i < archivos.length; i++) {
-    const file = archivos[i];
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      mapa.setView([pos.coords.latitude, pos.coords.longitude], 16);
+      ponerMarcador(pos.coords.latitude, pos.coords.longitude);
+      btnUbicacion.textContent = "📍 Usar mi ubicación";
+      btnUbicacion.disabled = false;
+    },
+    () => {
+      alert("No se pudo obtener tu ubicación. Selecciona en el mapa.");
+      btnUbicacion.textContent = "📍 Usar mi ubicación";
+      btnUbicacion.disabled = false;
+    }
+  );
+});
 
-    // Validar que sea imagen
-    if (!file.type.startsWith("image/")) continue;
-
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
-
-    // estilos
-    img.style.width = "120px";
-    img.style.height = "120px";
-    img.style.objectFit = "cover";
-    img.style.margin = "5px";
-    img.style.borderRadius = "8px";
-    img.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
-
-    preview.appendChild(img);
+window.addEventListener("load", () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        mapa.setView([pos.coords.latitude, pos.coords.longitude], 16);
+        ponerMarcador(pos.coords.latitude, pos.coords.longitude);
+      },
+      () => { inputUbicacion.placeholder = "Selecciona en el mapa"; }
+    );
   }
 });
 
+// ── PREVIEW ───────────────────────────────────────
+function agregarAlPreview(file, nombre) {
+  const id = Date.now() + Math.random();
+  todasLasImagenes.push({ id, file, nombre });
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "preview-wrapper";
+  wrapper.dataset.id = id;
+
+  const img = document.createElement("img");
+  img.src = URL.createObjectURL(file);
+
+  const btnEliminar = document.createElement("button");
+  btnEliminar.className = "btn-eliminar-foto";
+  btnEliminar.textContent = "✕";
+  btnEliminar.onclick = () => {
+    todasLasImagenes = todasLasImagenes.filter(i => i.id !== id);
+    wrapper.remove();
+  };
+
+  wrapper.appendChild(img);
+  wrapper.appendChild(btnEliminar);
+  preview.appendChild(wrapper);
+}
+
+inputImagenes.addEventListener("change", () => {
+  const archivos = inputImagenes.files;
+  for (let i = 0; i < archivos.length; i++) {
+    const file = archivos[i];
+    if (!file.type.startsWith("image/")) continue;
+    agregarAlPreview(file, file.name);
+  }
+  inputImagenes.value = "";
+});
+
+// ── CÁMARA ────────────────────────────────────────
+let streamCamara = null;
+let fotoBlob = null;
+
+async function abrirCamara() {
+  fotoBlob = null;
+  document.getElementById("modal-camara").classList.add("activo");
+  document.getElementById("camara-container").style.display = "block";
+  document.getElementById("foto-tomada-container").style.display = "none";
+  document.getElementById("btnTomarFoto").style.display = "inline-block";
+  document.getElementById("btnRetomar").style.display = "none";
+  document.getElementById("btnUsarFoto").style.display = "none";
+
+  try {
+    streamCamara = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+      audio: false
+    });
+    document.getElementById("video").srcObject = streamCamara;
+  } catch (err) {
+    alert("No se pudo acceder a la cámara. Verifica los permisos.");
+    cerrarCamara();
+  }
+}
+
+function tomarFoto() {
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video, 0, 0);
+
+  canvas.toBlob((blob) => {
+    fotoBlob = blob;
+    document.getElementById("foto-preview").src = URL.createObjectURL(blob);
+    document.getElementById("camara-container").style.display = "none";
+    document.getElementById("foto-tomada-container").style.display = "block";
+    document.getElementById("btnTomarFoto").style.display = "none";
+    document.getElementById("btnRetomar").style.display = "inline-block";
+    document.getElementById("btnUsarFoto").style.display = "inline-block";
+    if (streamCamara) streamCamara.getTracks().forEach(t => t.stop());
+  }, "image/jpeg", 0.9);
+}
+
+function retomar() {
+  fotoBlob = null;
+  document.getElementById("foto-tomada-container").style.display = "none";
+  document.getElementById("camara-container").style.display = "block";
+  document.getElementById("btnTomarFoto").style.display = "inline-block";
+  document.getElementById("btnRetomar").style.display = "none";
+  document.getElementById("btnUsarFoto").style.display = "none";
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
+    .then(stream => {
+      streamCamara = stream;
+      document.getElementById("video").srcObject = stream;
+    });
+}
+
+function usarFoto() {
+  if (!fotoBlob) return;
+  const nombre = `foto-camara-${Date.now()}.jpg`;
+  const file = new File([fotoBlob], nombre, { type: "image/jpeg" });
+  agregarAlPreview(file, nombre);
+  cerrarCamara();
+}
+
+function cerrarCamara() {
+  if (streamCamara) streamCamara.getTracks().forEach(t => t.stop());
+  streamCamara = null;
+  fotoBlob = null;
+  document.getElementById("modal-camara").classList.remove("activo");
+  document.getElementById("video").srcObject = null;
+}
+
+// ── ENVIAR REPORTE ────────────────────────────────
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const mayorEdad = document.querySelector('input[name="mayorEdad"]:checked');
+  if (!mayorEdad) {
+    alert("Por favor indica si eres mayor o menor de edad.");
+    return;
+  }
+  if (mayorEdad.value === "no") {
+    alert("Lo sentimos, debes ser mayor de 18 años para enviar un reporte.");
+    return;
+  }
+
   const descripcion = document.getElementById("descripcion").value;
-  const ubicacion = document.getElementById("ubicacion").value;
-  const imagenes = inputImagenes.files;
+  const ubicacion = inputUbicacion.value;
+
+  if (!ubicacion) {
+    alert("Por favor selecciona una ubicación en el mapa o usa tu ubicación.");
+    return;
+  }
 
   const formData = new FormData();
   formData.append("descripcion", descripcion);
   formData.append("ubicacion", ubicacion);
-
-  for (let i = 0; i < imagenes.length; i++) {
-    formData.append("imagenes", imagenes[i]);
-  }
+  todasLasImagenes.forEach(item => {
+    formData.append("imagenes", item.file, item.nombre);
+  });
 
   try {
-    const res = await fetch("http://localhost:3000/reporte", {
-      method: "POST",
-      body: formData
-    });
-
+    const res = await fetch(`${API_URL}/reporte`, { method: "POST", body: formData });
     const data = await res.json();
-    alert(data.message);
+    alert(`${data.message}\n\n📋 Guarda tu número de reporte:\nReporte #${data.reporteId}`);
 
     form.reset();
     preview.innerHTML = "";
+    todasLasImagenes = [];
+    inputUbicacion.value = "";
+    if (marcador) { mapa.removeLayer(marcador); marcador = null; }
+    mapa.setView([MONTERIA_LAT, MONTERIA_LNG], 13);
 
   } catch (error) {
     console.error(error);
     alert("Error al enviar el reporte");
   }
 });
+
+// ── CONSULTAR ESTADO ──────────────────────────────
+async function consultarEstado() {
+  const id = document.getElementById("inputReporteId").value.trim();
+  const resultadoDiv = document.getElementById("resultado-consulta");
+  const errorDiv = document.getElementById("error-consulta");
+
+  resultadoDiv.style.display = "none";
+  errorDiv.style.display = "none";
+
+  if (!id) {
+    errorDiv.textContent = "Por favor ingresa el número del reporte.";
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/reporte/estado/${id}`);
+    if (res.status === 404) {
+      errorDiv.textContent = `No se encontró el reporte #${id}.`;
+      errorDiv.style.display = "block";
+      return;
+    }
+
+    const data = await res.json();
+    document.getElementById("res-id").textContent = data.id;
+    document.getElementById("res-descripcion").textContent = data.descripcion;
+    document.getElementById("res-ubicacion").textContent = data.ubicacion;
+    document.getElementById("res-categoria").textContent = data.categoria || "Sin clasificar";
+    document.getElementById("res-entidad").textContent = data.entidad_nombre || "Sin asignar";
+    document.getElementById("res-fecha").textContent = new Date(data.fecha).toLocaleDateString("es-CO", {
+      year: "numeric", month: "long", day: "numeric"
+    });
+
+    const badge = document.getElementById("res-estado-badge");
+    badge.textContent = data.estado;
+    badge.className = `estado-badge estado-${data.estado.replace(" ", "-")}`;
+    resultadoDiv.style.display = "block";
+
+  } catch (err) {
+    errorDiv.textContent = "Error al consultar. Intenta de nuevo.";
+    errorDiv.style.display = "block";
+  }
+}
