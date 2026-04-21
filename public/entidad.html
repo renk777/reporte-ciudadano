@@ -7,37 +7,24 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
 
     body { background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp); background-position: center; background-size: cover; background-repeat: no-repeat;}
 
     header {
       background: #1a5e3a;
       color: white;
-      padding: 14px 20px;
+      padding: 16px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 100%;
-      box-sizing: border-box;
-      flex-wrap: nowrap;
     }
 
     img {
       display: flex;
       max-width: 7%;  
       height: 7%;    
-      margin-left: 0; 
+      margin-left: 1100px; 
     }
 
     header h1 { font-size: 18px; }
@@ -220,14 +207,13 @@
 </head>
 <body>
 
-<header>
-  <div>
+<header style="width:100%;box-sizing:border-box;">
+  <div style="flex:1;">
     <h1>🏢 Panel Entidad Gubernamental</h1>
     <span id="nombre-entidad"></span>
   </div>
-    </div>
-    <div class="logofin">
-    <img src="logov2.png">
+  <div class="logofin">
+    <img src="logov2.png" style="height:36px;width:auto;">
   </div>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
