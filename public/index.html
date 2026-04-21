@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="icon" type="image/png" href="logov2.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reporte Ciudadano</title>
@@ -20,9 +19,10 @@
 
     <form id="formReporte">
 
-      <label>Fecha de nacimiento <span class="requerido">*</span></label>
-      <input type="date" id="fechaNacimiento" required>
-      <p class="hint">Debes ser mayor de 18 años para reportar.</p>
+      <div id="captcha-edad" style="display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 16px;border:1px solid #ccc;border-radius:8px;background:rgba(255,255,255,0.6);">
+        <input type="checkbox" id="esMayor" style="width:20px;height:20px;cursor:pointer;accent-color:#1a3c5e;margin:0;flex-shrink:0;">
+        <label for="esMayor" style="font-size:14px;color:#333;cursor:pointer;margin:0;font-weight:600;">Confirmo que soy mayor de 18 años</label>
+      </div>
 
       <label>Descripción <span class="requerido">*</span></label>
       <input type="text" id="descripcion" placeholder="Describe el problema" required>

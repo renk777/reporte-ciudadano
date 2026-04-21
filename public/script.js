@@ -177,13 +177,9 @@ function cerrarCamara() {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const mayorEdad = document.querySelector('input[name="mayorEdad"]:checked');
-  if (!mayorEdad) {
-    alert("Por favor indica si eres mayor o menor de edad.");
-    return;
-  }
-  if (mayorEdad.value === "no") {
-    alert("Lo sentimos, debes ser mayor de 18 años para enviar un reporte.");
+  const checkbox = document.getElementById("esMayor");
+  if (!checkbox.checked) {
+    alert("Debes confirmar que eres mayor de 18 años para enviar un reporte.");
     return;
   }
 
