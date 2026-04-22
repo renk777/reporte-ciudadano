@@ -365,34 +365,3 @@ button[type="submit"]:active {
   .container { width: 95%; margin: 20px auto; }
   .imagen-opciones { flex-direction: column; }
 }
-/* ── BOTÓN SUGERENCIAS MÓVIL ── */
-.btn-sugerencias-movil {
-  display: none; /* oculto en desktop */
-}
-
-@media (max-width: 768px) {
-  .btn-sugerencias-movil {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background: rgba(26, 60, 94, 0.85);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-
-  .btn-sugerencias-movil:hover {
-    background: rgba(26, 60, 94, 1);
-  }
-
-  #container2 {
-    display: none; /* oculto por defecto en móvil */
-    width: 100% !important;
-    margin: 0 0 10px 0 !important;
-  }
-}
