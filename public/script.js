@@ -1,3 +1,29 @@
+// ── SUGERENCIAS MÓVIL ────────────────────────────
+function toggleSugerencias() {
+  const container = document.getElementById("container2");
+  const btn = document.getElementById("btnSugerencias");
+  if (container.style.display === "none" || container.style.display === "") {
+    container.style.display = "block";
+    btn.textContent = "✕ Cerrar sugerencias";
+  } else {
+    container.style.display = "none";
+    btn.textContent = "💡 Sugerencias";
+  }
+}
+
+// ── SUGERENCIAS ──────────────────────────────────
+function toggleSugerencias() {
+  const contenido = document.getElementById("sugerencias-contenido");
+  const btn = document.querySelector(".btn-sugerencias");
+  if (contenido.classList.contains("visible")) {
+    contenido.classList.remove("visible");
+    btn.textContent = "💡 Ver sugerencias";
+  } else {
+    contenido.classList.add("visible");
+    btn.textContent = "💡 Ocultar sugerencias";
+  }
+}
+
 const form = document.getElementById("formReporte");
 const inputImagenes = document.getElementById("imagenes");
 const preview = document.getElementById("preview");
