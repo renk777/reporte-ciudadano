@@ -8,6 +8,8 @@ const API_URL = "https://reporte-ciudadano-production.up.railway.app";
 
 const MONTERIA_LAT = 8.7479;
 const MONTERIA_LNG = -75.8814;
+// Radio aproximado de Montería en km
+const MONTERIA_RADIO_KM = 15;
 
 let todasLasImagenes = [];
 
@@ -19,6 +21,21 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let marcador = null;
 
+// ── VERIFICAR SI ESTÁ EN MONTERÍA ─────────────────
+function distanciaKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function estaEnMonteria(lat, lng) {
+  return distanciaKm(lat, lng, MONTERIA_LAT, MONTERIA_LNG) <= MONTERIA_RADIO_KM;
+}
+
 // ── GEOCODIFICACIÓN INVERSA ───────────────────────
 async function obtenerDireccion(lat, lng) {
   try {
@@ -28,17 +45,13 @@ async function obtenerDireccion(lat, lng) {
     );
     const data = await res.json();
     const a = data.address || {};
-
     const partes = [];
     if (a.road) partes.push(a.road);
     if (a.house_number) partes.push('#' + a.house_number);
-    if (a.neighbourhood || a.suburb || a.quarter) {
+    if (a.neighbourhood || a.suburb || a.quarter)
       partes.push('Barrio ' + (a.neighbourhood || a.suburb || a.quarter));
-    }
-    if (a.city || a.town || a.village || a.municipality) {
+    if (a.city || a.town || a.village || a.municipality)
       partes.push(a.city || a.town || a.village || a.municipality);
-    }
-
     return partes.length > 0 ? partes.join(', ') : `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
   } catch (e) {
     return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
@@ -46,6 +59,13 @@ async function obtenerDireccion(lat, lng) {
 }
 
 async function ponerMarcador(lat, lng) {
+  if (!estaEnMonteria(lat, lng)) {
+    alert("Solo se pueden reportar problemas dentro de la ciudad de Montería, Córdoba.");
+    if (marcador) { mapa.removeLayer(marcador); marcador = null; }
+    inputUbicacion.value = "";
+    mapa.setView([MONTERIA_LAT, MONTERIA_LNG], 13);
+    return;
+  }
   if (marcador) mapa.removeLayer(marcador);
   marcador = L.marker([lat, lng]).addTo(mapa);
   inputUbicacion.value = "Obteniendo dirección...";
@@ -65,8 +85,16 @@ btnUbicacion.addEventListener("click", () => {
 
   navigator.geolocation.getCurrentPosition(
     (pos) => {
-      mapa.setView([pos.coords.latitude, pos.coords.longitude], 16);
-      ponerMarcador(pos.coords.latitude, pos.coords.longitude);
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      if (!estaEnMonteria(lat, lng)) {
+        alert("Tu ubicación está fuera de Montería. Solo se permiten reportes dentro de la ciudad.");
+        btnUbicacion.textContent = "📍 Usar mi ubicación";
+        btnUbicacion.disabled = false;
+        return;
+      }
+      mapa.setView([lat, lng], 16);
+      ponerMarcador(lat, lng);
       btnUbicacion.textContent = "📍 Usar mi ubicación";
       btnUbicacion.disabled = false;
     },
@@ -82,8 +110,14 @@ window.addEventListener("load", () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        mapa.setView([pos.coords.latitude, pos.coords.longitude], 16);
-        ponerMarcador(pos.coords.latitude, pos.coords.longitude);
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        if (estaEnMonteria(lat, lng)) {
+          mapa.setView([lat, lng], 16);
+          ponerMarcador(lat, lng);
+        } else {
+          inputUbicacion.placeholder = "Selecciona en el mapa (solo Montería)";
+        }
       },
       () => { inputUbicacion.placeholder = "Selecciona en el mapa"; }
     );
@@ -94,14 +128,11 @@ window.addEventListener("load", () => {
 function agregarAlPreview(file, nombre) {
   const id = Date.now() + Math.random();
   todasLasImagenes.push({ id, file, nombre });
-
   const wrapper = document.createElement("div");
   wrapper.className = "preview-wrapper";
   wrapper.dataset.id = id;
-
   const img = document.createElement("img");
   img.src = URL.createObjectURL(file);
-
   const btnEliminar = document.createElement("button");
   btnEliminar.className = "btn-eliminar-foto";
   btnEliminar.textContent = "✕";
@@ -109,7 +140,6 @@ function agregarAlPreview(file, nombre) {
     todasLasImagenes = todasLasImagenes.filter(i => i.id !== id);
     wrapper.remove();
   };
-
   wrapper.appendChild(img);
   wrapper.appendChild(btnEliminar);
   preview.appendChild(wrapper);
@@ -118,9 +148,8 @@ function agregarAlPreview(file, nombre) {
 inputImagenes.addEventListener("change", () => {
   const archivos = inputImagenes.files;
   for (let i = 0; i < archivos.length; i++) {
-    const file = archivos[i];
-    if (!file.type.startsWith("image/")) continue;
-    agregarAlPreview(file, file.name);
+    if (!archivos[i].type.startsWith("image/")) continue;
+    agregarAlPreview(archivos[i], archivos[i].name);
   }
   inputImagenes.value = "";
 });
@@ -137,15 +166,11 @@ async function abrirCamara() {
   document.getElementById("btnTomarFoto").style.display = "inline-block";
   document.getElementById("btnRetomar").style.display = "none";
   document.getElementById("btnUsarFoto").style.display = "none";
-
   try {
-    streamCamara = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-      audio: false
-    });
+    streamCamara = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
     document.getElementById("video").srcObject = streamCamara;
   } catch (err) {
-    alert("No se pudo acceder a la cámara. Verifica los permisos.");
+    alert("No se pudo acceder a la cámara.");
     cerrarCamara();
   }
 }
@@ -156,7 +181,6 @@ function tomarFoto() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   canvas.getContext("2d").drawImage(video, 0, 0);
-
   canvas.toBlob((blob) => {
     fotoBlob = blob;
     document.getElementById("foto-preview").src = URL.createObjectURL(blob);
@@ -176,26 +200,20 @@ function retomar() {
   document.getElementById("btnTomarFoto").style.display = "inline-block";
   document.getElementById("btnRetomar").style.display = "none";
   document.getElementById("btnUsarFoto").style.display = "none";
-
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
-    .then(stream => {
-      streamCamara = stream;
-      document.getElementById("video").srcObject = stream;
-    });
+    .then(stream => { streamCamara = stream; document.getElementById("video").srcObject = stream; });
 }
 
 function usarFoto() {
   if (!fotoBlob) return;
   const nombre = `foto-camara-${Date.now()}.jpg`;
-  const file = new File([fotoBlob], nombre, { type: "image/jpeg" });
-  agregarAlPreview(file, nombre);
+  agregarAlPreview(new File([fotoBlob], nombre, { type: "image/jpeg" }), nombre);
   cerrarCamara();
 }
 
 function cerrarCamara() {
   if (streamCamara) streamCamara.getTracks().forEach(t => t.stop());
-  streamCamara = null;
-  fotoBlob = null;
+  streamCamara = null; fotoBlob = null;
   document.getElementById("modal-camara").classList.remove("activo");
   document.getElementById("video").srcObject = null;
 }
@@ -203,42 +221,32 @@ function cerrarCamara() {
 // ── ENVIAR REPORTE ────────────────────────────────
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const checkbox = document.getElementById("esMayor");
   if (!checkbox || !checkbox.checked) {
-    alert("Debes confirmar que eres mayor de 18 años para enviar un reporte.");
+    alert("Debes confirmar que eres mayor de 18 años.");
     return;
   }
-
   const descripcion = document.getElementById("descripcion").value;
   const ubicacion = inputUbicacion.value;
-
   if (!ubicacion || ubicacion === "Obteniendo dirección...") {
-    alert("Por favor selecciona una ubicación en el mapa o usa tu ubicación.");
+    alert("Por favor selecciona una ubicación en el mapa.");
     return;
   }
-
   const formData = new FormData();
   formData.append("descripcion", descripcion);
   formData.append("ubicacion", ubicacion);
-  todasLasImagenes.forEach(item => {
-    formData.append("imagenes", item.file, item.nombre);
-  });
-
+  todasLasImagenes.forEach(item => formData.append("imagenes", item.file, item.nombre));
   try {
     const res = await fetch(`${API_URL}/reporte`, { method: "POST", body: formData });
     const data = await res.json();
     alert(`${data.message}\n\n📋 Guarda tu número de reporte:\nReporte #${data.reporteId}`);
-
     form.reset();
     preview.innerHTML = "";
     todasLasImagenes = [];
     inputUbicacion.value = "";
     if (marcador) { mapa.removeLayer(marcador); marcador = null; }
     mapa.setView([MONTERIA_LAT, MONTERIA_LNG], 13);
-
   } catch (error) {
-    console.error(error);
     alert("Error al enviar el reporte");
   }
 });
@@ -248,41 +256,25 @@ async function consultarEstado() {
   const id = document.getElementById("inputReporteId").value.trim();
   const resultadoDiv = document.getElementById("resultado-consulta");
   const errorDiv = document.getElementById("error-consulta");
-
   resultadoDiv.style.display = "none";
   errorDiv.style.display = "none";
-
-  if (!id) {
-    errorDiv.textContent = "Por favor ingresa el número del reporte.";
-    errorDiv.style.display = "block";
-    return;
-  }
-
+  if (!id) { errorDiv.textContent = "Ingresa el número del reporte."; errorDiv.style.display = "block"; return; }
   try {
     const res = await fetch(`${API_URL}/reporte/estado/${id}`);
-    if (res.status === 404) {
-      errorDiv.textContent = `No se encontró el reporte #${id}.`;
-      errorDiv.style.display = "block";
-      return;
-    }
-
+    if (res.status === 404) { errorDiv.textContent = `No se encontró el reporte #${id}.`; errorDiv.style.display = "block"; return; }
     const data = await res.json();
     document.getElementById("res-id").textContent = data.id;
     document.getElementById("res-descripcion").textContent = data.descripcion;
     document.getElementById("res-ubicacion").textContent = data.ubicacion;
     document.getElementById("res-categoria").textContent = data.categoria || "Sin clasificar";
     document.getElementById("res-entidad").textContent = data.entidad_nombre || "Sin asignar";
-    document.getElementById("res-fecha").textContent = new Date(data.fecha).toLocaleDateString("es-CO", {
-      year: "numeric", month: "long", day: "numeric"
-    });
-
+    document.getElementById("res-fecha").textContent = new Date(data.fecha).toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" });
     const badge = document.getElementById("res-estado-badge");
     badge.textContent = data.estado;
     badge.className = `estado-badge estado-${data.estado.replace(" ", "-")}`;
     resultadoDiv.style.display = "block";
-
   } catch (err) {
-    errorDiv.textContent = "Error al consultar. Intenta de nuevo.";
+    errorDiv.textContent = "Error al consultar.";
     errorDiv.style.display = "block";
   }
 }
