@@ -1,19 +1,25 @@
 * { box-sizing: border-box; }
+header {
+  flex-wrap: wrap;
+}
+
+.btn-cerrar {
+  margin-left: auto;
+}
 @media (max-width: 768px) {
   body {
     flex-direction: column;
-    .container2 {
-      width: auto;
-      margin-left: -10px;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
+    padding: 10px;
+  }
+
+  .container2 {
+    width: 100%;
+    margin-left: 0;
   }
 }
-
+body {
+  overflow-x: hidden;
+}
 body {
   font-family: Arial, sans-serif;
   background: #f4f4f4;

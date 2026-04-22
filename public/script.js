@@ -10,7 +10,46 @@ const MONTERIA_LAT = 8.7479;
 const MONTERIA_LNG = -75.8814;
 // Radio aproximado de Montería en km
 const MONTERIA_RADIO_KM = 15;
+let mapaModal = null;
+let marcadorModal = null;
 
+function verUbicacion(ubicacionTexto, id) {
+  document.getElementById("modal-mapa").classList.add("activo");
+  document.getElementById("texto-ubicacion").textContent = ubicacionTexto;
+
+  setTimeout(() => {
+    if (!mapaModal) {
+      mapaModal = L.map('mapa-reporte').setView([8.7479, -75.8814], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(mapaModal);
+    }
+
+    // 🔥 Intenta extraer coordenadas del texto
+    const coords = ubicacionTexto.match(/-?\d+\.\d+/g);
+
+    if (coords && coords.length >= 2) {
+      const lat = parseFloat(coords[0]);
+      const lng = parseFloat(coords[1]);
+
+      mapaModal.setView([lat, lng], 16);
+
+      if (marcadorModal) mapaModal.removeLayer(marcadorModal);
+      marcadorModal = L.marker([lat, lng]).addTo(mapaModal);
+    }
+  }, 200);
+}
+
+function cerrarModalMapa(e) {
+  if (e.target.id === "modal-mapa") {
+    document.getElementById("modal-mapa").classList.remove("activo");
+  }
+}
+
+function cerrarModalMapaBtn() {
+  document.getElementById("modal-mapa").classList.remove("activo");
+}
 let todasLasImagenes = [];
 
 // ── MAPA ──────────────────────────────────────────
