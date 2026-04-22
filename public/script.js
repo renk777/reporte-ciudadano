@@ -1,29 +1,3 @@
-// ── SUGERENCIAS MÓVIL ────────────────────────────
-function toggleSugerencias() {
-  const container = document.getElementById("container2");
-  const btn = document.getElementById("btnSugerencias");
-  if (container.style.display === "none" || container.style.display === "") {
-    container.style.display = "block";
-    btn.textContent = "✕ Cerrar sugerencias";
-  } else {
-    container.style.display = "none";
-    btn.textContent = "💡 Sugerencias";
-  }
-}
-
-// ── SUGERENCIAS ──────────────────────────────────
-function toggleSugerencias() {
-  const contenido = document.getElementById("sugerencias-contenido");
-  const btn = document.querySelector(".btn-sugerencias");
-  if (contenido.classList.contains("visible")) {
-    contenido.classList.remove("visible");
-    btn.textContent = "💡 Ver sugerencias";
-  } else {
-    contenido.classList.add("visible");
-    btn.textContent = "💡 Ocultar sugerencias";
-  }
-}
-
 const form = document.getElementById("formReporte");
 const inputImagenes = document.getElementById("imagenes");
 const preview = document.getElementById("preview");
@@ -35,7 +9,6 @@ const API_URL = "https://reporte-ciudadano-production.up.railway.app";
 const MONTERIA_LAT = 8.7479;
 const MONTERIA_LNG = -75.8814;
 
-// Arreglo con todas las imágenes
 let todasLasImagenes = [];
 
 // ── MAPA ──────────────────────────────────────────
@@ -46,10 +19,38 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let marcador = null;
 
-function ponerMarcador(lat, lng) {
+// ── GEOCODIFICACIÓN INVERSA ───────────────────────
+async function obtenerDireccion(lat, lng) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+      { headers: { 'Accept-Language': 'es' } }
+    );
+    const data = await res.json();
+    const a = data.address || {};
+
+    const partes = [];
+    if (a.road) partes.push(a.road);
+    if (a.house_number) partes.push('#' + a.house_number);
+    if (a.neighbourhood || a.suburb || a.quarter) {
+      partes.push('Barrio ' + (a.neighbourhood || a.suburb || a.quarter));
+    }
+    if (a.city || a.town || a.village || a.municipality) {
+      partes.push(a.city || a.town || a.village || a.municipality);
+    }
+
+    return partes.length > 0 ? partes.join(', ') : `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  } catch (e) {
+    return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  }
+}
+
+async function ponerMarcador(lat, lng) {
   if (marcador) mapa.removeLayer(marcador);
   marcador = L.marker([lat, lng]).addTo(mapa);
-  inputUbicacion.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  inputUbicacion.value = "Obteniendo dirección...";
+  const direccion = await obtenerDireccion(lat, lng);
+  inputUbicacion.value = direccion;
 }
 
 mapa.on('click', (e) => ponerMarcador(e.latlng.lat, e.latlng.lng));
@@ -204,7 +205,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const checkbox = document.getElementById("esMayor");
-  if (!checkbox.checked) {
+  if (!checkbox || !checkbox.checked) {
     alert("Debes confirmar que eres mayor de 18 años para enviar un reporte.");
     return;
   }
@@ -212,7 +213,7 @@ form.addEventListener("submit", async (e) => {
   const descripcion = document.getElementById("descripcion").value;
   const ubicacion = inputUbicacion.value;
 
-  if (!ubicacion) {
+  if (!ubicacion || ubicacion === "Obteniendo dirección...") {
     alert("Por favor selecciona una ubicación en el mapa o usa tu ubicación.");
     return;
   }
