@@ -9,12 +9,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
-  <!-- Botón sugerencias solo en móvil -->
-  <button id="btnSugerencias" class="btn-sugerencias-movil" onclick="toggleSugerencias()">
-    💡 Sugerencias
-  </button>
-
-  <div class="container2" id="container2">
+  <div class="container2">
     <img src="recoms.png">
   </div>
 
@@ -120,6 +115,20 @@
     </div>
   </div>
 
+  <script>
+  function toggleSugerencias() {
+    const container = document.getElementById("container2");
+    const btn = document.getElementById("btnSugerencias");
+    if (!container) return;
+    if (container.style.display === "block") {
+      container.style.display = "none";
+      btn.textContent = "💡 Sugerencias";
+    } else {
+      container.style.display = "block";
+      btn.textContent = "✕ Cerrar sugerencias";
+    }
+  }
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
