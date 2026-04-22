@@ -2,7 +2,35 @@
 header {
   flex-wrap: wrap;
 }
+@media (max-width: 768px) {
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+  }
 
+  header > div:first-child {
+    flex: 1; /* ocupa el espacio disponible */
+  }
+
+  .logofin {
+    margin: 0 8px;
+  }
+.contenido {
+  min-height: 60vh;
+}
+  header img {
+  width: 50px;
+  height: auto;
+}
+
+  .btn-cerrar {
+    margin-left: auto;
+    white-space: nowrap;
+  }
+}
 .btn-cerrar {
   margin-left: auto;
 }
@@ -21,16 +49,17 @@ body {
   overflow-x: hidden;
 }
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: px;
+  min-height: 100vh;
   background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
   background-size: cover;
-  background-repeat: repeat-y;
   background-position: center;
+  background-repeat: no-repeat;
 }
-
+@media (max-width: 768px) {
+  body {
+    min-height: 100dvh; /* mejor que vh en celulares */
+  }
+}
 body {
     display: flex;
     justify-content: space-between; 
