@@ -59,7 +59,7 @@ router.get('/admin/reportes', verificarRol('admin'), (req, res) => {
   });
 });
 
-// Obtener imágenes de un reporte (admin)
+// Obtener imagenes de un reporte (admin)
 router.get('/admin/reportes/:id/imagenes', verificarRol('admin'), (req, res) => {
   const { id } = req.params;
   pool.query("SELECT ruta FROM imagenes WHERE reporte_id = ?", [id], (err, results) => {
@@ -96,7 +96,7 @@ router.get('/entidad/reportes', verificarRol('entidad'), (req, res) => {
   });
 });
 
-// Obtener imágenes de un reporte (entidad)
+// Obtener imagenes de un reporte (entidad)
 router.get('/entidad/reportes/:id/imagenes', verificarRol('entidad'), (req, res) => {
   const { id } = req.params;
   pool.query("SELECT ruta FROM imagenes WHERE reporte_id = ?", [id], (err, results) => {
@@ -129,7 +129,7 @@ router.put('/entidad/estado/:id', verificarRol('entidad'), (req, res) => {
 router.delete("/admin/eliminar/:id", verificarRol("admin"), (req, res) => {
   const { id } = req.params;
 
-  // Primero eliminar imágenes asociadas
+  // Primero eliminar imagenes asociadas
   pool.query("DELETE FROM imagenes WHERE reporte_id = ?", [id], (err) => {
     if (err) return res.status(500).json({ message: "Error al eliminar imágenes" });
 
@@ -142,7 +142,7 @@ router.delete("/admin/eliminar/:id", verificarRol("admin"), (req, res) => {
   });
 });
 
-// RF10: Consultar estado público
+// RF10: Consultar estado publico
 router.get('/reporte/estado/:id', (req, res) => {
   const { id } = req.params;
   const sql = `

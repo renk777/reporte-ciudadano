@@ -9,7 +9,7 @@ cloudinary.config({
 });
 
 function subirACloudinary(buffer, nombreArchivo) {
-  // Quitar extensión para que Cloudinary no la duplique
+  // Quitar extension para que cloudinary no la duplique
   const nombreSinExt = nombreArchivo.replace(/\.[^/.]+$/, "");
 
   return new Promise((resolve, reject) => {

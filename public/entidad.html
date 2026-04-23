@@ -332,7 +332,7 @@ html {
           <td>${r.id}</td>
           <td>${r.descripcion}</td>
           <td>${r.categoria || '-'}</td>
-          <td>${r.ubicacion}</td>
+          <td>${r.ubicacion.includes('|') ? r.ubicacion.split('|')[1] : r.ubicacion}</td>
           <td>${new Date(r.fecha).toLocaleDateString("es-CO")}</td>
           <td><span class="estado-badge estado-${r.estado}">${r.estado}</span></td>
           <td>
@@ -424,7 +424,11 @@ let mapaReporte = null;
 
 function verUbicacion(ubicacion, reporteId) {
   document.getElementById("modal-mapa").classList.add("activo");
-  document.getElementById("texto-ubicacion").textContent = "📍 " + ubicacion;
+  const partes = ubicacion.split("|");
+const coordsTexto = partes[0];
+const direccionTexto = partes.length > 1 ? partes[1] : partes[0];
+document.getElementById("texto-ubicacion").textContent = "📍 " + direccionTexto;
+const coords = coordsTexto.match(/-?[\d.]+/g);
 
   if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
 

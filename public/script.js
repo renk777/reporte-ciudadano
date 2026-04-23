@@ -8,7 +8,6 @@ const API_URL = "https://reporte-ciudadano-production.up.railway.app";
 
 const MONTERIA_LAT = 8.7479;
 const MONTERIA_LNG = -75.8814;
-// Radio aproximado de Montería en km
 const MONTERIA_RADIO_KM = 15;
 let mapaModal = null;
 let marcadorModal = null;
@@ -26,7 +25,7 @@ function verUbicacion(ubicacionTexto, id) {
       }).addTo(mapaModal);
     }
 
-    // 🔥 Intenta extraer coordenadas del texto
+    
     const coords = ubicacionTexto.match(/-?\d+\.\d+/g);
 
     if (coords && coords.length >= 2) {
@@ -52,7 +51,7 @@ function cerrarModalMapaBtn() {
 }
 let todasLasImagenes = [];
 
-// ── MAPA ──────────────────────────────────────────
+// MAPA
 const mapa = L.map('mapa').setView([MONTERIA_LAT, MONTERIA_LNG], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
@@ -60,7 +59,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let marcador = null;
 
-// ── VERIFICAR SI ESTÁ EN MONTERÍA ─────────────────
+// VERIFICAR SI ESTA EN MONTERIA
 function distanciaKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -75,7 +74,7 @@ function estaEnMonteria(lat, lng) {
   return distanciaKm(lat, lng, MONTERIA_LAT, MONTERIA_LNG) <= MONTERIA_RADIO_KM;
 }
 
-// ── GEOCODIFICACIÓN INVERSA ───────────────────────
+// GEOCODIFICACION INVERSA(para obtener la direccion de las coordenadas)
 async function obtenerDireccion(lat, lng) {
   try {
     const res = await fetch(
@@ -110,6 +109,8 @@ async function ponerMarcador(lat, lng) {
   inputUbicacion.value = "Obteniendo dirección...";
   const direccion = await obtenerDireccion(lat, lng);
   inputUbicacion.value = direccion;
+inputUbicacion.dataset.lat = lat;
+inputUbicacion.dataset.lng = lng;
 }
 
 mapa.on('click', (e) => ponerMarcador(e.latlng.lat, e.latlng.lng));
@@ -163,7 +164,7 @@ window.addEventListener("load", () => {
   }
 });
 
-// ── PREVIEW ───────────────────────────────────────
+
 function agregarAlPreview(file, nombre) {
   const id = Date.now() + Math.random();
   todasLasImagenes.push({ id, file, nombre });
@@ -193,7 +194,7 @@ inputImagenes.addEventListener("change", () => {
   inputImagenes.value = "";
 });
 
-// ── CÁMARA ────────────────────────────────────────
+
 let streamCamara = null;
 let fotoBlob = null;
 
@@ -257,7 +258,7 @@ function cerrarCamara() {
   document.getElementById("video").srcObject = null;
 }
 
-// ── ENVIAR REPORTE ────────────────────────────────
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const checkbox = document.getElementById("esMayor");
@@ -273,7 +274,10 @@ form.addEventListener("submit", async (e) => {
   }
   const formData = new FormData();
   formData.append("descripcion", descripcion);
-  formData.append("ubicacion", ubicacion);
+  const lat = inputUbicacion.dataset.lat;
+const lng = inputUbicacion.dataset.lng;
+const ubicacionGuardar = (lat && lng) ? `${lat},${lng}|${ubicacion}` : ubicacion;
+formData.append("ubicacion", ubicacionGuardar);
   todasLasImagenes.forEach(item => formData.append("imagenes", item.file, item.nombre));
   try {
     const res = await fetch(`${API_URL}/reporte`, { method: "POST", body: formData });
@@ -290,7 +294,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ── CONSULTAR ESTADO ──────────────────────────────
+
 async function consultarEstado() {
   const id = document.getElementById("inputReporteId").value.trim();
   const resultadoDiv = document.getElementById("resultado-consulta");

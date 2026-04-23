@@ -346,7 +346,6 @@ html {
 </div>
 
 
-<!-- Modal mapa ubicación -->
 <div class="modal-overlay" id="modal-mapa" onclick="cerrarModalMapa(event)">
   <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:700px;max-width:95%;">
     <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:12px;flex-shrink:0;">🗺️ Ubicación del reporte</h2>
@@ -358,7 +357,6 @@ html {
   </div>
 </div>
 
-<!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="cerrarLightbox()">
   <button class="lightbox-cerrar" onclick="cerrarLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="Imagen ampliada">
@@ -401,7 +399,7 @@ html {
         <tr>
           <td>${r.id}</td>
           <td>${r.descripcion}</td>
-          <td>${r.ubicacion}</td>
+          <td>${r.ubicacion.includes('|') ? r.ubicacion.split('|')[1] : r.ubicacion}</td>
           <td>${new Date(r.fecha).toLocaleDateString("es-CO")}</td>
           <td><span class="estado-badge estado-${r.estado}">${r.estado}</span></td>
           <td>${r.entidad_nombre || '<span style="color:#aaa">Sin asignar</span>'}</td>
@@ -510,7 +508,11 @@ let mapaReporte = null;
 
 function verUbicacion(ubicacion, reporteId) {
   document.getElementById("modal-mapa").classList.add("activo");
-  document.getElementById("texto-ubicacion").textContent = "📍 " + ubicacion;
+  const partes = ubicacion.split("|");
+const coordsTexto = partes[0];
+const direccionTexto = partes.length > 1 ? partes[1] : partes[0];
+document.getElementById("texto-ubicacion").textContent = "📍 " + direccionTexto;
+const coords = coordsTexto.match(/-?[\d.]+/g);
 
   if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
 
