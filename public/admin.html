@@ -14,20 +14,35 @@
   margin-left: 10px;
 }
 
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; padding-top: 70px; }
 
     body {
-       background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp); background-position: center; background-size: cover; background-repeat: no-repeat;
-    }
+  background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+html {
+  min-height: 100%;
+  background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+  background-size: cover;
+  background-attachment: fixed;
+}
 
     header {
-      background: #1a3c5e;
-      color: white;
-      padding: 16px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+  background: #1a3c5e;
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  width: 100%;
+  z-index: 999;
+  box-sizing: border-box;
+}
 
     header img {
       display: flex;
@@ -251,7 +266,7 @@
 <body>
 
 <header>
-  <div>
+  <div style="flex:1;min-width:0;">
     <h1>🏛️ Panel Administrador</h1>
     <span id="nombre-admin"></span>
   </div>
@@ -491,7 +506,49 @@
     localStorage.removeItem("sesion");
     window.location.href = "login.html";
   }
+let mapaReporte = null;
 
+function verUbicacion(ubicacion, reporteId) {
+  document.getElementById("modal-mapa").classList.add("activo");
+  document.getElementById("texto-ubicacion").textContent = "📍 " + ubicacion;
+
+  if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
+
+  setTimeout(() => {
+    mapaReporte = L.map('mapa-reporte').setView([8.7479, -75.8814], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(mapaReporte);
+
+    const coords = ubicacion.match(/-?[\d.]+/g);
+    if (coords && coords.length >= 2) {
+      const lat = parseFloat(coords[0]);
+      const lng = parseFloat(coords[1]);
+      mapaReporte.setView([lat, lng], 16);
+      L.marker([lat, lng]).addTo(mapaReporte).bindPopup("Reporte #" + reporteId).openPopup();
+    } else {
+      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(ubicacion + ", Montería, Colombia")}&format=json&limit=1`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            mapaReporte.setView([lat, lng], 16);
+            L.marker([lat, lng]).addTo(mapaReporte).bindPopup("Reporte #" + reporteId).openPopup();
+          }
+        });
+    }
+  }, 150);
+}
+
+function cerrarModalMapa(event) {
+  if (event.target === document.getElementById("modal-mapa")) cerrarModalMapaBtn();
+}
+
+function cerrarModalMapaBtn() {
+  document.getElementById("modal-mapa").classList.remove("activo");
+  if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
+}
   cargarReportes();
 </script>
 
