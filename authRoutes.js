@@ -115,7 +115,7 @@ router.get('/entidad/reportes/:id/imagenes', verificarRol('entidad'), (req, res)
 // RF08/RF09: Entidad - actualizar estado
 router.put('/entidad/estado/:id', verificarRol('entidad'), (req, res) => {
   const { id } = req.params;
-  const { estado } = req.body;
+  const { estado, comentario } = req.body;
   const entidad_id = req.headers['x-usuario-id'];
 
   const estadosValidos = ['Asignado', 'En proceso', 'Solucionado'];
@@ -125,10 +125,10 @@ router.put('/entidad/estado/:id', verificarRol('entidad'), (req, res) => {
     if (err) return res.status(500).json({ message: "Error del servidor" });
     if (results.length === 0) return res.status(403).json({ message: "No tienes permiso para este reporte" });
 
-    pool.query("UPDATE reportes SET estado = ? WHERE id = ?", [estado, id], (err2) => {
-      if (err2) return res.status(500).json({ message: "Error al actualizar" });
-      res.json({ message: `Estado actualizado a: ${estado}` });
-    });
+    pool.query("UPDATE reportes SET estado = ?, comentario = ? WHERE id = ?", [estado, comentario || null, id], (err2) => {
+  if (err2) return res.status(500).json({ message: "Error al actualizar" });
+  res.json({ message: `Estado actualizado a: ${estado}` });
+});
   });
 });
 

@@ -277,6 +277,28 @@ html {
 </div>
 
 
+<div class="modal-overlay" id="modal-estado" onclick="cerrarModalEstado(event)">
+  <div class="modal" style="width:450px;max-width:95%;">
+    <h2 style="font-size:18px;color:#1a5e3a;margin-bottom:16px;">📝 Actualizar estado</h2>
+    <input type="hidden" id="estado-reporte-id">
+
+    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Estado</label>
+    <select id="estado-nuevo" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:14px;">
+      <option value="Asignado">Asignado</option>
+      <option value="En proceso">En proceso</option>
+      <option value="Solucionado">Solucionado</option>
+    </select>
+
+    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Comentario <span style="color:#aaa;font-weight:normal;">(opcional)</span></label>
+    <textarea id="estado-comentario" placeholder="Ej: Se programó visita para el lunes..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;resize:vertical;min-height:90px;font-family:inherit;"></textarea>
+
+    <div class="modal-btns" style="margin-top:16px;">
+      <button class="btn-cancelar" onclick="document.getElementById('modal-estado').classList.remove('activo')">Cancelar</button>
+      <button class="btn-guardar" style="flex:1;padding:10px;border-radius:8px;" onclick="confirmarActualizacion()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-fotos">
   <div class="modal">
     <h2>📷 Imágenes del reporte</h2>
@@ -342,7 +364,7 @@ html {
                 <option value="En proceso"  ${r.estado === "En proceso"  ? "selected" : ""}>En proceso</option>
                 <option value="Solucionado" ${r.estado === "Solucionado" ? "selected" : ""}>Solucionado</option>
               </select>
-              <button class="btn-guardar" onclick="actualizarEstado(${r.id})">Guardar</button>
+              <button class="btn-guardar" onclick="abrirModalEstado(${r.id}, '${r.estado}')">Actualizar</button>
               <button class="btn-fotos" onclick="verFotos(${r.id})">📷 Fotos</button>
               <button class="btn-ubicacion" onclick="verUbicacion('${r.ubicacion}', ${r.id})">🗺️ Mapa</button>
             </div>
@@ -354,6 +376,42 @@ html {
       console.error(err);
     }
   }
+
+function abrirModalEstado(reporteId, estadoActual) {
+  document.getElementById("estado-reporte-id").value = reporteId;
+  document.getElementById("estado-nuevo").value = estadoActual;
+  document.getElementById("estado-comentario").value = "";
+  document.getElementById("modal-estado").classList.add("activo");
+}
+
+function cerrarModalEstado(event) {
+  if (event.target === document.getElementById("modal-estado"))
+    document.getElementById("modal-estado").classList.remove("activo");
+}
+
+async function confirmarActualizacion() {
+  const reporteId = document.getElementById("estado-reporte-id").value;
+  const estado = document.getElementById("estado-nuevo").value;
+  const comentario = document.getElementById("estado-comentario").value.trim();
+
+  try {
+    const res = await fetch(`${API_URL}/entidad/estado/${reporteId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-usuario-id": sesion.id,
+        "x-rol": sesion.rol
+      },
+      body: JSON.stringify({ estado, comentario })
+    });
+    const data = await res.json();
+    alert(data.message);
+    document.getElementById("modal-estado").classList.remove("activo");
+    cargarReportes();
+  } catch (err) {
+    alert("Error al actualizar el estado");
+  }
+}
 
   async function actualizarEstado(reporteId) {
     const estado = document.getElementById(`estado-${reporteId}`).value;
