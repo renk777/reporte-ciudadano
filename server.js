@@ -12,6 +12,8 @@ app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const { verificarLimite } = require('./authRoutes');
+app.use('/reporte', verificarLimite);
 app.use('/', reportRoutes);
 app.use('/', authRoutes);
 

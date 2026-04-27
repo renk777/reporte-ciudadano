@@ -302,7 +302,11 @@ formData.append("ubicacion", ubicacionGuardar);
   try {
     const res = await fetch(`${API_URL}/reporte`, { method: "POST", body: formData });
     const data = await res.json();
-   mostrarNotificacion(`${data.message}\n\n📋 Guarda tu número de reporte:\nReporte #${data.reporteId}`);
+if (!res.ok) {
+  mostrarNotificacion(data.message, "error", 6000);
+  return;
+}
+mostrarNotificacion(`✅ Reporte #${data.reporteId} enviado correctamente. ¡Guarda tu número!`, "exito", 6000);
     form.reset();
     preview.innerHTML = "";
     todasLasImagenes = [];
@@ -310,7 +314,7 @@ formData.append("ubicacion", ubicacionGuardar);
     if (marcador) { mapa.removeLayer(marcador); marcador = null; }
     mapa.setView([MONTERIA_LAT, MONTERIA_LNG], 13);
   } catch (error) {
-    mostrarNotificacion("Error al enviar el reporte");
+    mostrarNotificacion("Error al enviar el reporte. Intenta de nuevo.", "error");
   }
 });
 

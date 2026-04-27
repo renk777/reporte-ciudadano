@@ -3,6 +3,33 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const pool = require('./db');
 
+// Mapa para rastrear envios por IP
+const limiteReportes = new Map();
+
+function verificarLimite(req, res, next) {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ahora = Date.now();
+  const limite = 3; // maximo de reportes por hora
+  const ventana = 60 * 60 * 1000; // 1 hora en ms
+
+  if (!limiteReportes.has(ip)) {
+    limiteReportes.set(ip, []);
+  }
+
+  // Filtrar solo los envios dentro de la ultima hora
+  const envios = limiteReportes.get(ip).filter(t => ahora - t < ventana);
+  envios.push(ahora);
+  limiteReportes.set(ip, envios);
+
+  if (envios.length > limite) {
+    return res.status(429).json({
+      message: `Has alcanzado el límite de ${limite} reportes por hora. Intenta más tarde.`
+    });
+  }
+
+  next();
+}
+
 function verificarRol(rolRequerido) {
   return (req, res, next) => {
     const rol = req.headers['x-rol'];
@@ -237,3 +264,4 @@ router.delete('/admin/cuentas/:id', verificarRol('admin'), (req, res) => {
 });
 
 module.exports = router;
+module.exports.verificarLimite = verificarLimite;
