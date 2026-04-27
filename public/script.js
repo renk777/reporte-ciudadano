@@ -461,10 +461,8 @@ function iniciarMapaPublico() {
       `);
   });
 }
-
-cargarReportesPublicos();
-
-    lista.innerHTML = data.map(r => `
+ 
+lista.innerHTML = data.map(r => `
       <div style="padding:12px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;background:rgba(255,255,255,0.7);">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
           <span style="font-weight:600;font-size:14px;">#${r.id} — ${r.descripcion}</span>
