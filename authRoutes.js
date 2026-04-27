@@ -171,4 +171,62 @@ router.get('/reportes/publicos', (req, res) => {
     res.json(results);
   });
 });
+
+// Gestión de cuentas
+router.get('/admin/cuentas', verificarRol('admin'), (req, res) => {
+  pool.query("SELECT id, nombre, usuario, rol FROM usuarios ORDER BY rol, nombre", (err, results) => {
+    if (err) return res.status(500).json({ message: "Error del servidor" });
+    res.json(results);
+  });
+});
+
+router.post('/admin/cuentas', verificarRol('admin'), async (req, res) => {
+  const { nombre, usuario, password, rol } = req.body;
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    pool.query("INSERT INTO usuarios (nombre, usuario, password, rol) VALUES (?,?,?,?)",
+      [nombre, usuario, hash, rol], (err) => {
+        if (err) {
+          if (err.code === 'ER_DUP_ENTRY') return res.status(400).json({ message: "Ese usuario ya existe" });
+          return res.status(500).json({ message: "Error al crear la cuenta" });
+        }
+        res.json({ message: `Cuenta "${nombre}" creada correctamente` });
+      });
+  } catch (err) {
+    res.status(500).json({ message: "Error del servidor" });
+  }
+});
+
+router.put('/admin/cuentas/:id', verificarRol('admin'), async (req, res) => {
+  const { id } = req.params;
+  const { nombre, usuario, password } = req.body;
+  try {
+    if (password) {
+      const hash = await bcrypt.hash(password, 10);
+      pool.query("UPDATE usuarios SET nombre=?, usuario=?, password=? WHERE id=?",
+        [nombre, usuario, hash, id], (err) => {
+          if (err) return res.status(500).json({ message: "Error al actualizar" });
+          res.json({ message: "Cuenta actualizada correctamente" });
+        });
+    } else {
+      pool.query("UPDATE usuarios SET nombre=?, usuario=? WHERE id=?",
+        [nombre, usuario, id], (err) => {
+          if (err) return res.status(500).json({ message: "Error al actualizar" });
+          res.json({ message: "Cuenta actualizada correctamente" });
+        });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Error del servidor" });
+  }
+});
+
+router.delete('/admin/cuentas/:id', verificarRol('admin'), (req, res) => {
+  const { id } = req.params;
+  pool.query("DELETE FROM usuarios WHERE id=?", [id], (err, result) => {
+    if (err) return res.status(500).json({ message: "Error al eliminar" });
+    if (result.affectedRows === 0) return res.status(404).json({ message: "Cuenta no encontrada" });
+    res.json({ message: "Cuenta eliminada correctamente" });
+  });
+});
+
 module.exports = router;
