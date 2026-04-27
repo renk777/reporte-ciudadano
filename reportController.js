@@ -28,12 +28,11 @@ function subirACloudinary(buffer, nombreArchivo) {
 }
 
 exports.crearReporte = async (req, res) => {
-  const { descripcion, ubicacion } = req.body;
+  const { descripcion, ubicacion, categoria } = req.body;
   const imagenes = req.files;
 
-  const sqlReporte = "INSERT INTO reportes (descripcion, ubicacion) VALUES (?, ?)";
-
-  pool.query(sqlReporte, [descripcion, ubicacion], async (err, result) => {
+  const sqlReporte = "INSERT INTO reportes (descripcion, ubicacion, categoria) VALUES (?, ?, ?)";
+pool.query(sqlReporte, [descripcion, ubicacion, categoria], async (err, result) => {
     if (err) {
       console.error("Error al guardar reporte:", err);
       return res.status(500).json({ message: "Error al guardar el reporte" });

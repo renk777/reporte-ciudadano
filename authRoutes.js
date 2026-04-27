@@ -158,5 +158,17 @@ router.get('/reporte/estado/:id', (req, res) => {
     res.json(results[0]);
   });
 });
-
+// Reportes publicos (ultimos 10)
+router.get('/reportes/publicos', (req, res) => {
+  const sql = `
+    SELECT id, descripcion, ubicacion, estado, categoria, fecha
+    FROM reportes
+    ORDER BY fecha DESC
+    LIMIT 10
+  `;
+  pool.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ message: "Error del servidor" });
+    res.json(results);
+  });
+});
 module.exports = router;

@@ -23,6 +23,15 @@
         <label for="esMayor" style="font-size:14px;color:#333;cursor:pointer;margin:0;font-weight:600;">Confirmo que soy mayor de 18 años</label>
       </div>
 
+      <label>Categoría <span class="requerido">*</span></label>
+<select id="categoria" required style="width:100%;padding:9px 12px;margin-top:5px;border:1px solid #ccc;border-radius:8px;font-size:14px;background:white;">
+  <option value="">Selecciona una categoría</option>
+  <option value="Infraestructura vial">🚧 Infraestructura vial (huecos, andenes)</option>
+  <option value="Recolección de basura">🗑️ Recolección de basura</option>
+  <option value="Alumbrado público">💡 Alumbrado público</option>
+  <option value="Espacios públicos">🌳 Espacios públicos</option>
+  <option value="Otro">📌 Otro</option>
+</select>
       <label>Descripción <span class="requerido">*</span></label>
       <input type="text" id="descripcion" placeholder="Describe el problema" required>
 
@@ -87,6 +96,14 @@
       <div id="error-consulta"></div>
     </div>
 
+    <hr class="separador">
+
+<div id="seccion-reportes-publicos">
+  <h2 class="subtitulo">📋 Últimos reportes</h2>
+  <div id="lista-reportes-publicos">
+    <p style="text-align:center;color:#666;font-size:14px;">Cargando reportes...</p>
+  </div>
+</div>
     <div class="link-admin">
       <a href="login.html">🔐 Acceso para administradores y entidades</a>
     </div>

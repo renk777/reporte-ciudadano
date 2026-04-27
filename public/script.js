@@ -274,6 +274,9 @@ form.addEventListener("submit", async (e) => {
   }
   const formData = new FormData();
   formData.append("descripcion", descripcion);
+  const categoria = document.getElementById("categoria").value;
+if (!categoria) { alert("Por favor selecciona una categoría."); return; }
+formData.append("categoria", categoria);
   const lat = inputUbicacion.dataset.lat;
 const lng = inputUbicacion.dataset.lng;
 const ubicacionGuardar = (lat && lng) ? `${lat},${lng}|${ubicacion}` : ubicacion;
@@ -321,3 +324,35 @@ async function consultarEstado() {
     errorDiv.style.display = "block";
   }
 }
+// LISTA PuBLICA DE REPORTES
+async function cargarReportesPublicos() {
+  try {
+    const res = await fetch(`${API_URL}/reportes/publicos`);
+    const data = await res.json();
+    const lista = document.getElementById("lista-reportes-publicos");
+
+    if (data.length === 0) {
+      lista.innerHTML = "<p style='text-align:center;color:#666;font-size:14px;'>No hay reportes aún.</p>";
+      return;
+    }
+
+    lista.innerHTML = data.map(r => `
+      <div style="padding:12px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;background:rgba(255,255,255,0.7);">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+          <span style="font-weight:600;font-size:14px;">#${r.id} — ${r.descripcion}</span>
+          <span class="estado-badge estado-${r.estado.replace(' ','-')}">${r.estado}</span>
+        </div>
+        <div style="font-size:12px;color:#666;margin-top:6px;display:grid;gap:2px;">
+          <span>🏷️ ${r.categoria || 'Sin categoría'}</span>
+          <span>📍 ${r.ubicacion.includes('|') ? r.ubicacion.split('|')[1] : r.ubicacion}</span>
+          <span>📅 ${new Date(r.fecha).toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'})}</span>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    document.getElementById("lista-reportes-publicos").innerHTML =
+      "<p style='text-align:center;color:#aaa;font-size:14px;'>No se pudieron cargar los reportes.</p>";
+  }
+}
+
+cargarReportesPublicos();
