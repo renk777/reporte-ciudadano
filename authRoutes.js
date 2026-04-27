@@ -43,14 +43,21 @@ router.post('/login', (req, res) => {
 
 // RF05: Admin - obtener todos los reportes
 router.get('/admin/reportes', verificarRol('admin'), (req, res) => {
-  const { estado } = req.query;
+  const { estado, categoria, fechaInicio, fechaFin } = req.query;
+
   let sql = `
     SELECT r.*, u.nombre as entidad_nombre 
     FROM reportes r
     LEFT JOIN usuarios u ON r.entidad_id = u.id
+    WHERE 1=1
   `;
   const params = [];
-  if (estado) { sql += " WHERE r.estado = ?"; params.push(estado); }
+
+  if (estado) { sql += " AND r.estado = ?"; params.push(estado); }
+  if (categoria) { sql += " AND r.categoria = ?"; params.push(categoria); }
+  if (fechaInicio) { sql += " AND DATE(r.fecha) >= ?"; params.push(fechaInicio); }
+  if (fechaFin) { sql += " AND DATE(r.fecha) <= ?"; params.push(fechaFin); }
+
   sql += " ORDER BY r.fecha DESC";
 
   pool.query(sql, params, (err, results) => {

@@ -336,13 +336,24 @@ html {
 
 <div class="contenido">
   <div class="filtros">
-    <select id="filtro-estado" onchange="cargarReportes()">
-      <option value="">Todos los estados</option>
-      <option value="Pendiente">Pendiente</option>
-      <option value="Asignado">Asignado</option>
-      <option value="En proceso">En proceso</option>
-      <option value="Solucionado">Solucionado</option>
-    </select>
+  <select id="filtro-estado" onchange="cargarReportes()">
+    <option value="">Todos los estados</option>
+    <option value="Pendiente">Pendiente</option>
+    <option value="Asignado">Asignado</option>
+    <option value="En proceso">En proceso</option>
+    <option value="Solucionado">Solucionado</option>
+  </select>
+  <select id="filtro-categoria" onchange="cargarReportes()">
+    <option value="">Todas las categorías</option>
+    <option value="Infraestructura vial">Infraestructura vial</option>
+    <option value="Recolección de basura">Recolección de basura</option>
+    <option value="Alumbrado público">Alumbrado público</option>
+    <option value="Espacios públicos">Espacios públicos</option>
+    <option value="Otro">Otro</option>
+  </select>
+  <input type="date" id="filtro-fecha-inicio" onchange="cargarReportes()" style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:white;">
+  <input type="date" id="filtro-fecha-fin" onchange="cargarReportes()" style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:white;">
+  <button onclick="limpiarFiltros()" style="padding:8px 14px;background:#6c757d;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;">✕ Limpiar</button>
   </div>
 
   <table>
@@ -425,8 +436,17 @@ html {
 
   async function cargarReportes() {
     const estado = document.getElementById("filtro-estado").value;
-    const url = estado ? `${API_URL}/admin/reportes?estado=${estado}` : `${API_URL}/admin/reportes`;
+    const categoria = document.getElementById("filtro-categoria").value;
+    const fechaInicio = document.getElementById("filtro-fecha-inicio").value;
+    const fechaFin = document.getElementById("filtro-fecha-fin").value;
 
+    const params = new URLSearchParams();
+    if (estado) params.append("estado", estado);
+    if (categoria) params.append("categoria", categoria);
+    if (fechaInicio) params.append("fechaInicio", fechaInicio);
+    if (fechaFin) params.append("fechaFin", fechaFin);
+
+    const url = `${API_URL}/admin/reportes?${params.toString()}`;
     try {
       const res = await fetch(url, {
         headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
@@ -642,6 +662,14 @@ async function eliminarCuenta(id, nombre) {
   const data = await res.json();
   alert(data.message);
   await cargarCuentas();
+}
+
+function limpiarFiltros() {
+  document.getElementById("filtro-estado").value = "";
+  document.getElementById("filtro-categoria").value = "";
+  document.getElementById("filtro-fecha-inicio").value = "";
+  document.getElementById("filtro-fecha-fin").value = "";
+  cargarReportes();
 }
 
   function cerrarSesion() {
