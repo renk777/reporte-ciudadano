@@ -364,6 +364,7 @@ html {
         <th>Fecha</th>
         <th>Estado</th>
         <th>Entidad asignada</th>
+        <th>Comentario</th>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -423,15 +424,16 @@ html {
 </div>
 
 <script>
-  const API_URL = "https://reporte-ciudadano-production.up.railway.app";
-  let reporteSeleccionado = null;
-
   const sesion = JSON.parse(localStorage.getItem("sesion") || "null");
-  if (!sesion || sesion.rol !== "admin") {
-    window.location.href = "login.html";
-  } else {
-    document.getElementById("nombre-admin").textContent = sesion.nombre;
-  }
+if (!sesion || sesion.rol !== "admin") {
+  window.location.href = "login.html";
+} else if (sesion.expira && Date.now() > sesion.expira) {
+  localStorage.removeItem("sesion");
+  alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
+  window.location.href = "login.html";
+} else {
+  document.getElementById("nombre-admin").textContent = sesion.nombre;
+}
 
   async function cargarReportes() {
     const estado = document.getElementById("filtro-estado").value;
@@ -724,6 +726,14 @@ function cerrarModalMapaBtn() {
   if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
 }
   cargarReportes();
+  setInterval(() => {
+  const s = JSON.parse(localStorage.getItem("sesion") || "null");
+  if (!s || (s.expira && Date.now() > s.expira)) {
+    localStorage.removeItem("sesion");
+    alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
+    window.location.href = "login.html";
+  }
+}, 60 * 1000);
 </script>
 
 </body>
