@@ -181,7 +181,10 @@
 
         if (data.success) {
           // Guardar sesion en localStorage
-          localStorage.setItem("sesion", JSON.stringify(data.user));
+          localStorage.setItem("sesion", JSON.stringify({
+  ...data.user,
+  expira: Date.now() + (8 * 60 * 60 * 1000) // expira en 8 horas
+}));
 
           // Redirigir segun el rol
           if (data.user.rol === "admin") {
