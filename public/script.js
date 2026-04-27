@@ -479,6 +479,6 @@ lista.innerHTML = data.map(r => `
     document.getElementById("lista-reportes-publicos").innerHTML =
       "<p style='text-align:center;color:#aaa;font-size:14px;'>No se pudieron cargar los reportes.</p>";
   }
-}
+
 
 cargarReportesPublicos();
