@@ -460,7 +460,6 @@ function iniciarMapaPublico() {
         </div>
       `);
   });
-}
  
 lista.innerHTML = data.map(r => `
       <div style="padding:12px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;background:rgba(255,255,255,0.7);">
@@ -475,6 +474,9 @@ lista.innerHTML = data.map(r => `
         </div>
       </div>
     `).join('');
+
+    window._reportesPublicos = data;
+
   } catch (err) {
     document.getElementById("lista-reportes-publicos").innerHTML =
       "<p style='text-align:center;color:#aaa;font-size:14px;'>No se pudieron cargar los reportes.</p>";
