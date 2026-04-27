@@ -34,7 +34,8 @@
   <option value="Otro">📌 Otro</option>
 </select>
       <label>Descripción <span class="requerido">*</span></label>
-      <input type="text" id="descripcion" placeholder="Describe el problema" required>
+      <input type="text" id="descripcion" placeholder="Describe el problema" required maxlength="200">
+<p id="contador-desc" style="font-size:12px;color:#888;text-align:right;margin-top:3px;">0 / 200</p>
 
       <label>Ubicación <span class="requerido">*</span></label>
       <div id="ubicacion-container">

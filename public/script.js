@@ -11,6 +11,10 @@ function mostrarNotificacion(mensaje, tipo = "info", duracion = 4000) {
   }, duracion);
 }
 
+document.getElementById("descripcion").addEventListener("input", function() {
+  document.getElementById("contador-desc").textContent = `${this.value.length} / 200`;
+});
+
 const form = document.getElementById("formReporte");
 const inputImagenes = document.getElementById("imagenes");
 const preview = document.getElementById("preview");
