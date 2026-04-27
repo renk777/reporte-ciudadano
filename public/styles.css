@@ -400,3 +400,25 @@ button[type="submit"]:active {
   .container { width: 95%; margin: 20px auto; }
   .imagen-opciones { flex-direction: column; }
 }
+
+/* NOTIFICACIONES */
+#notificacion {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  display: none;
+  max-width: 90%;
+  text-align: center;
+  transition: opacity 0.3s;
+}
+#notificacion.exito { background: #1a5e3a; }
+#notificacion.error { background: #dc3545; }
+#notificacion.info  { background: #1a3c5e; }

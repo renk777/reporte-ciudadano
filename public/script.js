@@ -1,3 +1,16 @@
+function mostrarNotificacion(mensaje, tipo = "info", duracion = 4000) {
+  const n = document.getElementById("notificacion");
+  n.textContent = mensaje;
+  n.className = tipo;
+  n.style.display = "block";
+  n.style.opacity = "1";
+  clearTimeout(window._notifTimer);
+  window._notifTimer = setTimeout(() => {
+    n.style.opacity = "0";
+    setTimeout(() => { n.style.display = "none"; }, 300);
+  }, duracion);
+}
+
 const form = document.getElementById("formReporte");
 const inputImagenes = document.getElementById("imagenes");
 const preview = document.getElementById("preview");
@@ -98,7 +111,7 @@ async function obtenerDireccion(lat, lng) {
 
 async function ponerMarcador(lat, lng) {
   if (!estaEnMonteria(lat, lng)) {
-    alert("Solo se pueden reportar problemas dentro de la ciudad de Montería, Córdoba.");
+   mostrarNotificacion("Solo se pueden reportar problemas dentro de la ciudad de Montería, Córdoba.");
     if (marcador) { mapa.removeLayer(marcador); marcador = null; }
     inputUbicacion.value = "";
     mapa.setView([MONTERIA_LAT, MONTERIA_LNG], 13);
@@ -117,7 +130,7 @@ mapa.on('click', (e) => ponerMarcador(e.latlng.lat, e.latlng.lng));
 
 btnUbicacion.addEventListener("click", () => {
   if (!navigator.geolocation) {
-    alert("Tu navegador no soporta geolocalización.");
+   mostrarNotificacion("Tu navegador no soporta geolocalización.");
     return;
   }
   btnUbicacion.textContent = "Obteniendo...";
@@ -128,7 +141,7 @@ btnUbicacion.addEventListener("click", () => {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       if (!estaEnMonteria(lat, lng)) {
-        alert("Tu ubicación está fuera de Montería. Solo se permiten reportes dentro de la ciudad.");
+        mostrarNotificacion("Tu ubicación está fuera de Montería. Solo se permiten reportes dentro de la ciudad.");
         btnUbicacion.textContent = "📍 Usar mi ubicación";
         btnUbicacion.disabled = false;
         return;
@@ -139,7 +152,7 @@ btnUbicacion.addEventListener("click", () => {
       btnUbicacion.disabled = false;
     },
     () => {
-      alert("No se pudo obtener tu ubicación. Selecciona en el mapa.");
+     mostrarNotificacion("No se pudo obtener tu ubicación. Selecciona en el mapa.");
       btnUbicacion.textContent = "📍 Usar mi ubicación";
       btnUbicacion.disabled = false;
     }
@@ -210,7 +223,7 @@ async function abrirCamara() {
     streamCamara = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
     document.getElementById("video").srcObject = streamCamara;
   } catch (err) {
-    alert("No se pudo acceder a la cámara.");
+   mostrarNotificacion("No se pudo acceder a la cámara.");
     cerrarCamara();
   }
 }
@@ -263,19 +276,19 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const checkbox = document.getElementById("esMayor");
   if (!checkbox || !checkbox.checked) {
-    alert("Debes confirmar que eres mayor de 18 años.");
+   mostrarNotificacion("Debes confirmar que eres mayor de 18 años.");
     return;
   }
   const descripcion = document.getElementById("descripcion").value;
   const ubicacion = inputUbicacion.value;
   if (!ubicacion || ubicacion === "Obteniendo dirección...") {
-    alert("Por favor selecciona una ubicación en el mapa.");
+   mostrarNotificacion("Por favor selecciona una ubicación en el mapa.");
     return;
   }
   const formData = new FormData();
   formData.append("descripcion", descripcion);
   const categoria = document.getElementById("categoria").value;
-if (!categoria) { alert("Por favor selecciona una categoría."); return; }
+if (!categoria) { mostrarNotificacion("Por favor selecciona una categoría."); return; }
 formData.append("categoria", categoria);
   const lat = inputUbicacion.dataset.lat;
 const lng = inputUbicacion.dataset.lng;
@@ -285,7 +298,7 @@ formData.append("ubicacion", ubicacionGuardar);
   try {
     const res = await fetch(`${API_URL}/reporte`, { method: "POST", body: formData });
     const data = await res.json();
-    alert(`${data.message}\n\n📋 Guarda tu número de reporte:\nReporte #${data.reporteId}`);
+   mostrarNotificacion(`${data.message}\n\n📋 Guarda tu número de reporte:\nReporte #${data.reporteId}`);
     form.reset();
     preview.innerHTML = "";
     todasLasImagenes = [];
@@ -293,7 +306,7 @@ formData.append("ubicacion", ubicacionGuardar);
     if (marcador) { mapa.removeLayer(marcador); marcador = null; }
     mapa.setView([MONTERIA_LAT, MONTERIA_LNG], 13);
   } catch (error) {
-    alert("Error al enviar el reporte");
+    mostrarNotificacion("Error al enviar el reporte");
   }
 });
 
