@@ -102,15 +102,22 @@
 
 <div id="seccion-reportes-publicos">
   <h2 class="subtitulo">📋 Últimos reportes</h2>
-  <div id="lista-reportes-publicos">
-    <p style="text-align:center;color:#666;font-size:14px;">Cargando reportes...</p>
-  </div>
-</div>
-    <div class="link-admin">
-      <a href="login.html">🔐 Acceso para administradores y entidades</a>
-    </div>
 
+  <!-- Botones para cambiar vista -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
+    <button type="button" id="btn-vista-lista" onclick="cambiarVista('lista')"
+      style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:#1a3c5e;color:white;">
+      📋 Lista
+    </button>
+    <button type="button" id="btn-vista-mapa" onclick="cambiarVista('mapa')"
+      style="flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:rgba(0,0,0,0.2);color:white;">
+      🗺️ Mapa
+    </button>
   </div>
+
+  <div id="lista-reportes-publicos"></div>
+  <div id="mapa-reportes-publicos" style="display:none;height:380px;border-radius:10px;border:1px solid #ccc;"></div>
+</div>
 
   
   <div class="modal-overlay" id="modal-camara">
