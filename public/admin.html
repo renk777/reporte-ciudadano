@@ -7,47 +7,44 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <title>Panel Administrador - Reporte Ciudadano</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0;}
-    header img {
-  width: 60px;
-  height: auto;
-  margin-left: 10px;
-}
-
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-  background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-html {
-  min-height: 100%;
-  background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
-  background-size: cover;
-  background-attachment: fixed;
-}
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    html {
+      min-height: 100%;
+      background-image: url(https://zenuradio.com/wp-content/uploads/2022/12/DSC_1855-1024x678.webp);
+      background-size: cover;
+      background-attachment: fixed;
+    }
 
     header {
-  background: #1a3c5e;
-  color: white;
-  padding: 16px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-    header img {
+      background: #1a3c5e;
+      color: white;
+      padding: 16px 30px;
       display: flex;
-  width: 60px;
-  height: auto;
-  margin-left: 10px;
-}
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
 
-    header h1 { font-size: 18px;}
-    header span { font-size: 14px; opacity: 0.8; margin-left: 20px;}
+    header .logo-header {
+      height: 36px;
+      width: auto;
+      margin: 0 10px;
+      flex-shrink: 0;
+    }
+
+    header h1 { font-size: 18px; }
+    header span { font-size: 14px; opacity: 0.8; margin-left: 8px; }
 
     .btn-cerrar {
       background: rgba(255,255,255,0.2);
@@ -57,8 +54,10 @@ html {
       border-radius: 6px;
       cursor: pointer;
       font-size: 13px;
+      white-space: nowrap;
+      margin-left: 6px;
     }
-    .btn-cerrar:hover { background: rgba(212, 104, 104, 0.3); }
+    .btn-cerrar:hover { background: rgba(212,104,104,0.3); }
 
     .stats {
       display: flex;
@@ -72,7 +71,7 @@ html {
       border-radius: 10px;
       padding: 16px 24px;
       flex: 1;
-      min-width: 150px;
+      min-width: 130px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       text-align: center;
     }
@@ -81,17 +80,42 @@ html {
     .stat-card .etiqueta { font-size: 12px; color: #666; margin-top: 4px; }
 
     .contenido { padding: 0 30px 30px; }
-@media (max-width: 768px) {
-  .contenido { padding: 0 10px 20px; overflow-x: hidden; }
-  .contenido table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
-}
-    @media (max-width: 768px) {
-  .contenido { padding: 0 10px 20px; overflow-x: hidden; }
-  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-}
 
-    .filtros { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-.filtros select, .filtros input, .filtros button { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white; }
+    @media (max-width: 768px) {
+      header { padding: 10px 14px; }
+      header h1 { font-size: 14px; }
+      .logo-header { display: none; }
+      .stats { padding: 10px 14px; gap: 8px; }
+      .stat-card { min-width: 100px; padding: 10px; }
+      .stat-card .numero { font-size: 22px; }
+      .contenido { padding: 0 10px 20px; overflow-x: hidden; }
+      .contenido table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+    }
+
+    .filtros {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .filtros select,
+    .filtros input,
+    .filtros button {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .filtros button {
+      background: #6c757d;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
 
     table {
       width: 100%;
@@ -107,12 +131,7 @@ html {
     tr:not(:last-child) td { border-bottom: 1px solid #f0f0f0; }
     tr:hover td { background: #f9fbfd; }
 
-    .estado-badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
+    .estado-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     .estado-Pendiente   { background: #fff3cd; color: #856404; }
     .estado-Asignado    { background: #cce5ff; color: #004085; }
     .estado-En\ proceso { background: #d4edda; color: #155724; }
@@ -120,42 +139,15 @@ html {
 
     .acciones { display: flex; gap: 6px; flex-wrap: wrap; }
 
-    .btn-asignar {
-      background: #2d6a9f;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
+    .btn-asignar  { background: #2d6a9f; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
     .btn-asignar:hover { background: #1a3c5e; }
-
-    .btn-fotos {
-      background: #6c757d;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
+    .btn-fotos    { background: #6c757d; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
     .btn-fotos:hover { background: #495057; }
-
-    .btn-ubicacion {
-      background: #17a2b8;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
+    .btn-ubicacion { background: #17a2b8; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
     .btn-ubicacion:hover { background: #138496; }
 
     .cargando { text-align: center; padding: 40px; color: #666; }
 
-    
     .modal-overlay {
       display: none;
       position: fixed;
@@ -173,7 +165,7 @@ html {
       border-radius: 12px;
       padding: 30px;
       width: 420px;
-      max-width: 90%;
+      max-width: 95%;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -200,93 +192,43 @@ html {
     .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
 
     .btn-confirmar {
-      flex: 1;
-      padding: 10px;
-      background: #1a3c5e;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
+      flex: 1; padding: 10px;
+      background: #1a3c5e; color: white;
+      border: none; border-radius: 8px;
+      cursor: pointer; font-weight: 600;
     }
 
     .btn-cancelar {
-      flex: 1;
-      padding: 10px;
-      background: #eee;
-      color: #333;
-      border: none;
-      border-radius: 8px;
+      flex: 1; padding: 10px;
+      background: #eee; color: #333;
+      border: none; border-radius: 8px;
       cursor: pointer;
     }
 
-    
     .fotos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
       margin-top: 16px;
+      padding: 4px;
     }
 
-    .fotos-grid img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
+    .fotos-grid-item {
+      background: #f0f0f0;
       border-radius: 8px;
+      overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
-    .fotos-grid img:hover { transform: scale(1.03); }
+
+    .fotos-grid-item img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      display: block;
+    }
 
     .sin-fotos { text-align: center; color: #aaa; padding: 20px; font-size: 14px; }
 
-    <!-- Formulario nueva cuenta -->
-    <div style="background:#f8f9fa;border-radius:8px;padding:16px;margin-bottom:16px;flex-shrink:0;">
-      <p style="font-weight:600;font-size:14px;margin-bottom:10px;">➕ Nueva cuenta</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <input id="nueva-nombre" placeholder="Nombre de la entidad" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-        <input id="nueva-usuario" placeholder="Usuario" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-        <input id="nueva-password" type="password" placeholder="Contraseña" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-        <select id="nuevo-rol" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-          <option value="entidad">Entidad gubernamental</option>
-          <option value="admin">Administrador</option>
-        </select>
-      </div>
-      <button onclick="crearCuenta()" style="margin-top:10px;width:100%;padding:9px;background:#1a3c5e;color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Crear cuenta</button>
-    </div>
-
-    <!-- Lista de cuentas -->
-    <div style="flex:1;overflow-y:auto;">
-      <p style="font-weight:600;font-size:14px;margin-bottom:10px;">📋 Cuentas existentes</p>
-      <div id="lista-cuentas"></div>
-    </div>
-
-    <div class="modal-btns" style="flex-shrink:0;padding-top:16px;">
-      <button class="btn-cancelar" onclick="document.getElementById('modal-cuentas').classList.remove('activo')">Cerrar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal editar cuenta -->
-<div class="modal-overlay" id="modal-editar-cuenta" onclick="cerrarModalEditar(event)">
-  <div class="modal" style="width:400px;max-width:95%;">
-    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:16px;">✏️ Editar cuenta</h2>
-    <input type="hidden" id="editar-id">
-    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Nombre</label>
-    <input id="editar-nombre" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin-bottom:10px;">
-    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Usuario</label>
-    <input id="editar-usuario" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin-bottom:10px;">
-    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Nueva contraseña <span style="color:#aaa;font-weight:normal;">(dejar vacío para no cambiar)</span></label>
-    <input id="editar-password" type="password" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin-bottom:10px;">
-    <div class="modal-btns">
-      <button class="btn-cancelar" onclick="document.getElementById('modal-editar-cuenta').classList.remove('activo')">Cancelar</button>
-      <button class="btn-confirmar" onclick="guardarEdicion()">Guardar</button>
-    </div>
-  </div>
-</div>
-.lightbox-cerrar { display: none; }
-.lightbox.activo .lightbox-cerrar { display: block; }
     .lightbox {
       display: none;
       position: fixed;
@@ -300,32 +242,28 @@ html {
     .lightbox.activo { display: flex; }
     .lightbox img { max-width: 90%; max-height: 90vh; border-radius: 8px; }
     .lightbox-cerrar {
-  position: absolute;
-  top: 20px; right: 30px;
-  z-index: 2001;
+      position: absolute;
+      top: 20px; right: 30px;
+      z-index: 2001;
       color: white;
       font-size: 32px;
       cursor: pointer;
       background: none;
       border: none;
+      display: none;
     }
+    .lightbox.activo .lightbox-cerrar { display: block; }
   </style>
 </head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <body>
-<!-- Modal gestion de cuentas -->
-<div class="modal-overlay" id="modal-cuentas" onclick="cerrarModalCuentas(event)">
-  <div class="modal" style="width:650px;max-width:95%;max-height:85vh;display:flex;flex-direction:column;">
-    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:16px;flex-shrink:0;">👥 Gestión de cuentas</h2>
+
 <header>
   <div style="flex:1;min-width:0;">
     <h1>🏛️ Panel Administrador</h1>
     <span id="nombre-admin"></span>
   </div>
-  <div class="logofin">
-    <img src="logov2.png">
-  </div>
-  <button class="btn-cerrar" onclick="abrirGestionCuentas()" style="background:rgba(255,255,255,0.15);margin-right:8px;">👥 Cuentas</button>
+  <img src="logov2.png" class="logo-header">
+  <button class="btn-cerrar" onclick="abrirGestionCuentas()">👥 Cuentas</button>
   <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
 </header>
 
@@ -339,24 +277,24 @@ html {
 
 <div class="contenido">
   <div class="filtros">
-  <select id="filtro-estado" onchange="cargarReportes()">
-    <option value="">Todos los estados</option>
-    <option value="Pendiente">Pendiente</option>
-    <option value="Asignado">Asignado</option>
-    <option value="En proceso">En proceso</option>
-    <option value="Solucionado">Solucionado</option>
-  </select>
-  <select id="filtro-categoria" onchange="cargarReportes()">
-    <option value="">Todas las categorías</option>
-    <option value="Infraestructura vial">Infraestructura vial</option>
-    <option value="Recolección de basura">Recolección de basura</option>
-    <option value="Alumbrado público">Alumbrado público</option>
-    <option value="Espacios públicos">Espacios públicos</option>
-    <option value="Otro">Otro</option>
-  </select>
-  <input type="date" id="filtro-fecha-inicio" onchange="cargarReportes()" style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:white;">
-  <input type="date" id="filtro-fecha-fin" onchange="cargarReportes()" style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:white;">
-  <button onclick="limpiarFiltros()" style="padding:8px 14px;background:#6c757d;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;">✕ Limpiar</button>
+    <select id="filtro-estado" onchange="cargarReportes()">
+      <option value="">Todos los estados</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Asignado">Asignado</option>
+      <option value="En proceso">En proceso</option>
+      <option value="Solucionado">Solucionado</option>
+    </select>
+    <select id="filtro-categoria" onchange="cargarReportes()">
+      <option value="">Todas las categorías</option>
+      <option value="Infraestructura vial">Infraestructura vial</option>
+      <option value="Recolección de basura">Recolección de basura</option>
+      <option value="Alumbrado público">Alumbrado público</option>
+      <option value="Espacios públicos">Espacios públicos</option>
+      <option value="Otro">Otro</option>
+    </select>
+    <input type="date" id="filtro-fecha-inicio" onchange="cargarReportes()">
+    <input type="date" id="filtro-fecha-fin" onchange="cargarReportes()">
+    <button onclick="limpiarFiltros()" style="grid-column:1/-1;">✕ Limpiar filtros</button>
   </div>
 
   <table>
@@ -364,6 +302,7 @@ html {
       <tr>
         <th>#</th>
         <th>Descripción</th>
+        <th>Categoría</th>
         <th>Ubicación</th>
         <th>Fecha</th>
         <th>Estado</th>
@@ -373,12 +312,12 @@ html {
       </tr>
     </thead>
     <tbody id="tabla-reportes">
-      <tr><td colspan="7" class="cargando">Cargando reportes...</td></tr>
+      <tr><td colspan="9" class="cargando">Cargando reportes...</td></tr>
     </tbody>
   </table>
 </div>
 
-
+<!-- Modal asignar -->
 <div class="modal-overlay" id="modal-asignar">
   <div class="modal">
     <h2>Asignar Reporte</h2>
@@ -399,18 +338,18 @@ html {
   </div>
 </div>
 
-
-<div class="modal-overlay" id="modal-fotos">
-  <div class="modal">
-    <h2>📷 Imágenes del reporte</h2>
-    <div id="fotos-contenido"></div>
-    <div class="modal-btns">
+<!-- Modal fotos -->
+<div class="modal-overlay" id="modal-fotos" onclick="cerrarModalFotosClick(event)">
+  <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:750px;max-width:95%;">
+    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:12px;flex-shrink:0;">📷 Imágenes del reporte</h2>
+    <div id="fotos-contenido" style="flex:1;overflow-y:auto;"></div>
+    <div class="modal-btns" style="flex-shrink:0;padding-top:16px;">
       <button class="btn-cancelar" onclick="cerrarModal('modal-fotos')">Cerrar</button>
     </div>
   </div>
 </div>
 
-
+<!-- Modal mapa -->
 <div class="modal-overlay" id="modal-mapa" onclick="cerrarModalMapa(event)">
   <div class="modal" style="display:flex;flex-direction:column;max-height:85vh;width:700px;max-width:95%;">
     <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:12px;flex-shrink:0;">🗺️ Ubicación del reporte</h2>
@@ -422,6 +361,55 @@ html {
   </div>
 </div>
 
+<!-- Modal gestión de cuentas -->
+<div class="modal-overlay" id="modal-cuentas" onclick="cerrarModalCuentas(event)">
+  <div class="modal" style="width:650px;max-width:95%;max-height:85vh;display:flex;flex-direction:column;">
+    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:16px;flex-shrink:0;">👥 Gestión de cuentas</h2>
+
+    <div style="background:#f8f9fa;border-radius:8px;padding:16px;margin-bottom:16px;flex-shrink:0;">
+      <p style="font-weight:600;font-size:14px;margin-bottom:10px;">➕ Nueva cuenta</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input id="nueva-nombre" placeholder="Nombre de la entidad" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
+        <input id="nueva-usuario" placeholder="Usuario" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
+        <input id="nueva-password" type="password" placeholder="Contraseña" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
+        <select id="nuevo-rol" style="padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
+          <option value="entidad">Entidad gubernamental</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+      <button onclick="crearCuenta()" style="margin-top:10px;width:100%;padding:9px;background:#1a3c5e;color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Crear cuenta</button>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;">
+      <p style="font-weight:600;font-size:14px;margin-bottom:10px;">📋 Cuentas existentes</p>
+      <div id="lista-cuentas"></div>
+    </div>
+
+    <div class="modal-btns" style="flex-shrink:0;padding-top:16px;">
+      <button class="btn-cancelar" onclick="document.getElementById('modal-cuentas').classList.remove('activo')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal editar cuenta -->
+<div class="modal-overlay" id="modal-editar-cuenta" onclick="cerrarModalEditar(event)">
+  <div class="modal" style="width:400px;max-width:95%;">
+    <h2 style="font-size:18px;color:#1a3c5e;margin-bottom:16px;">✏️ Editar cuenta</h2>
+    <input type="hidden" id="editar-id">
+    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Nombre</label>
+    <input id="editar-nombre" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin-bottom:10px;">
+    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Usuario</label>
+    <input id="editar-usuario" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin-bottom:10px;">
+    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Nueva contraseña <span style="color:#aaa;font-weight:normal;">(vacío = no cambiar)</span></label>
+    <input id="editar-password" type="password" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;margin-bottom:10px;">
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="document.getElementById('modal-editar-cuenta').classList.remove('activo')">Cancelar</button>
+      <button class="btn-confirmar" onclick="guardarEdicion()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="cerrarLightbox()">
   <button class="lightbox-cerrar" onclick="cerrarLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="">
@@ -429,16 +417,19 @@ html {
 
 <script>
   const API_URL = "https://reporte-ciudadano-production.up.railway.app";
+  let reporteSeleccionado = null;
+  let mapaReporte = null;
+
   const sesion = JSON.parse(localStorage.getItem("sesion") || "null");
-if (!sesion || sesion.rol !== "admin") {
-  window.location.href = "login.html";
-} else if (sesion.expira && Date.now() > sesion.expira) {
-  localStorage.removeItem("sesion");
-  alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
-  window.location.href = "login.html";
-} else {
-  document.getElementById("nombre-admin").textContent = sesion.nombre;
-}
+  if (!sesion || sesion.rol !== "admin") {
+    window.location.href = "login.html";
+  } else if (sesion.expira && Date.now() > sesion.expira) {
+    localStorage.removeItem("sesion");
+    alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
+    window.location.href = "login.html";
+  } else {
+    document.getElementById("nombre-admin").textContent = sesion.nombre;
+  }
 
   async function cargarReportes() {
     const estado = document.getElementById("filtro-estado").value;
@@ -452,9 +443,8 @@ if (!sesion || sesion.rol !== "admin") {
     if (fechaInicio) params.append("fechaInicio", fechaInicio);
     if (fechaFin) params.append("fechaFin", fechaFin);
 
-    const url = `${API_URL}/admin/reportes?${params.toString()}`;
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${API_URL}/admin/reportes?${params.toString()}`, {
         headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
       });
       const data = await res.json();
@@ -467,7 +457,7 @@ if (!sesion || sesion.rol !== "admin") {
 
       const tbody = document.getElementById("tabla-reportes");
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="cargando">No hay reportes</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="cargando">No hay reportes</td></tr>`;
         return;
       }
 
@@ -475,26 +465,32 @@ if (!sesion || sesion.rol !== "admin") {
         <tr>
           <td>${r.id}</td>
           <td>${r.descripcion}</td>
+          <td>${r.categoria || '<span style="color:#aaa">—</span>'}</td>
           <td>${r.ubicacion.includes('|') ? r.ubicacion.split('|')[1] : r.ubicacion}</td>
-          <td>${r.comentario ? `<span style="font-size:12px;color:#555;font-style:italic;">${r.comentario}</span>` : '<span style="color:#ccc;font-size:12px;">—</span>'}</td>
           <td>${new Date(r.fecha).toLocaleDateString("es-CO")}</td>
           <td><span class="estado-badge estado-${r.estado}">${r.estado}</span></td>
           <td>${r.entidad_nombre || '<span style="color:#aaa">Sin asignar</span>'}</td>
+          <td>${r.comentario ? `<span style="font-size:12px;color:#555;font-style:italic;">${r.comentario}</span>` : '<span style="color:#ccc;font-size:12px;">—</span>'}</td>
           <td>
             <div class="acciones">
-              <button class="btn-asignar" onclick="abrirModalAsignar(${r.id})">
-                ${r.entidad_id ? "Reasignar" : "Asignar"}
-              </button>
+              <button class="btn-asignar" onclick="abrirModalAsignar(${r.id})">${r.entidad_id ? "Reasignar" : "Asignar"}</button>
               <button class="btn-fotos" onclick="verFotos(${r.id})">📷 Fotos</button>
               <button class="btn-ubicacion" onclick="verUbicacion('${r.ubicacion}', ${r.id})">🗺️ Mapa</button>
             </div>
           </td>
         </tr>
       `).join("");
-
     } catch (err) {
       console.error(err);
     }
+  }
+
+  function limpiarFiltros() {
+    document.getElementById("filtro-estado").value = "";
+    document.getElementById("filtro-categoria").value = "";
+    document.getElementById("filtro-fecha-inicio").value = "";
+    document.getElementById("filtro-fecha-fin").value = "";
+    cargarReportes();
   }
 
   async function cargarEntidades() {
@@ -512,43 +508,6 @@ if (!sesion || sesion.rol !== "admin") {
     cargarEntidades();
   }
 
-  async function verFotos(reporteId) {
-    const contenido = document.getElementById("fotos-contenido");
-    contenido.innerHTML = "<p style='text-align:center;color:#666;'>Cargando imágenes...</p>";
-    document.getElementById("modal-fotos").classList.add("activo");
-
-    try {
-      const res = await fetch(`${API_URL}/admin/reportes/${reporteId}/imagenes`, {
-        headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
-      });
-      const imagenes = await res.json();
-
-      if (imagenes.length === 0) {
-        contenido.innerHTML = `<p class="sin-fotos">📷 Este reporte no tiene imágenes adjuntas.</p>`;
-        return;
-      }
-
-      contenido.innerHTML = `
-        <div class="fotos-grid">
-          ${imagenes.map(img => `
-            <img src="${img.ruta}" alt="Imagen del reporte" onclick="abrirLightbox('${img.ruta}')">
-          `).join("")}
-        </div>
-      `;
-    } catch (err) {
-      contenido.innerHTML = `<p class="sin-fotos">Error al cargar las imágenes.</p>`;
-    }
-  }
-
-  function abrirLightbox(url) {
-    document.getElementById("lightbox-img").src = url;
-    document.getElementById("lightbox").classList.add("activo");
-  }
-
-  function cerrarLightbox() {
-    document.getElementById("lightbox").classList.remove("activo");
-  }
-
   function cerrarModal(id) {
     document.getElementById(id).classList.remove("activo");
     if (id === "modal-asignar") reporteSeleccionado = null;
@@ -557,15 +516,10 @@ if (!sesion || sesion.rol !== "admin") {
   async function confirmarAsignacion() {
     const entidad_id = document.getElementById("select-entidad").value;
     const categoria = document.getElementById("select-categoria").value;
-
     try {
       const res = await fetch(`${API_URL}/admin/asignar/${reporteSeleccionado}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-usuario-id": sesion.id,
-          "x-rol": sesion.rol
-        },
+        headers: { "Content-Type": "application/json", "x-usuario-id": sesion.id, "x-rol": sesion.rol },
         body: JSON.stringify({ entidad_id, categoria })
       });
       const data = await res.json();
@@ -577,168 +531,195 @@ if (!sesion || sesion.rol !== "admin") {
     }
   }
 
-// GESTIoN DE CUENTAS
-async function abrirGestionCuentas() {
-  document.getElementById("modal-cuentas").classList.add("activo");
-  await cargarCuentas();
-}
+  async function verFotos(reporteId) {
+    const contenido = document.getElementById("fotos-contenido");
+    contenido.innerHTML = "<p style='text-align:center;color:#666;'>Cargando imágenes...</p>";
+    document.getElementById("modal-fotos").classList.add("activo");
+    try {
+      const res = await fetch(`${API_URL}/admin/reportes/${reporteId}/imagenes`, {
+        headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
+      });
+      const imagenes = await res.json();
+      if (imagenes.length === 0) {
+        contenido.innerHTML = `<p class="sin-fotos">📷 Este reporte no tiene imágenes.</p>`;
+        return;
+      }
+      contenido.innerHTML = `
+        <div class="fotos-grid">
+          ${imagenes.map(img => `
+            <div class="fotos-grid-item" onclick="abrirLightbox('${img.ruta}')">
+              <img src="${img.ruta}" alt="Imagen" onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#aaa;text-align:center>No disponible</p>'">
+            </div>
+          `).join("")}
+        </div>`;
+    } catch (err) {
+      contenido.innerHTML = `<p class="sin-fotos">Error al cargar las imágenes.</p>`;
+    }
+  }
 
-function cerrarModalCuentas(event) {
-  if (event.target === document.getElementById("modal-cuentas"))
-    document.getElementById("modal-cuentas").classList.remove("activo");
-}
+  function cerrarModalFotosClick(event) {
+    if (event.target === document.getElementById("modal-fotos")) cerrarModal("modal-fotos");
+  }
 
-function cerrarModalEditar(event) {
-  if (event.target === document.getElementById("modal-editar-cuenta"))
+  function abrirLightbox(url) {
+    document.getElementById("lightbox-img").src = url;
+    document.getElementById("lightbox").classList.add("activo");
+  }
+
+  function cerrarLightbox() {
+    document.getElementById("lightbox").classList.remove("activo");
+  }
+
+  function verUbicacion(ubicacion, reporteId) {
+    document.getElementById("modal-mapa").classList.add("activo");
+    const partes = ubicacion.split("|");
+    const coordsTexto = partes[0];
+    const direccionTexto = partes.length > 1 ? partes[1] : partes[0];
+    document.getElementById("texto-ubicacion").textContent = "📍 " + direccionTexto;
+
+    if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
+
+    setTimeout(() => {
+      mapaReporte = L.map('mapa-reporte').setView([8.7479, -75.8814], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(mapaReporte);
+
+      const coords = coordsTexto.match(/-?[\d.]+/g);
+      if (coords && coords.length >= 2) {
+        const lat = parseFloat(coords[0]);
+        const lng = parseFloat(coords[1]);
+        mapaReporte.setView([lat, lng], 16);
+        L.marker([lat, lng]).addTo(mapaReporte).bindPopup("Reporte #" + reporteId).openPopup();
+      } else {
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(direccionTexto + ", Montería, Colombia")}&format=json&limit=1`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.length > 0) {
+              const lat = parseFloat(data[0].lat);
+              const lng = parseFloat(data[0].lon);
+              mapaReporte.setView([lat, lng], 16);
+              L.marker([lat, lng]).addTo(mapaReporte).bindPopup("Reporte #" + reporteId).openPopup();
+            }
+          });
+      }
+    }, 150);
+  }
+
+  function cerrarModalMapa(event) {
+    if (event.target === document.getElementById("modal-mapa")) cerrarModalMapaBtn();
+  }
+
+  function cerrarModalMapaBtn() {
+    document.getElementById("modal-mapa").classList.remove("activo");
+    if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
+  }
+
+  // ── GESTIÓN DE CUENTAS ────────────────────────────
+  async function abrirGestionCuentas() {
+    document.getElementById("modal-cuentas").classList.add("activo");
+    await cargarCuentas();
+  }
+
+  function cerrarModalCuentas(event) {
+    if (event.target === document.getElementById("modal-cuentas"))
+      document.getElementById("modal-cuentas").classList.remove("activo");
+  }
+
+  function cerrarModalEditar(event) {
+    if (event.target === document.getElementById("modal-editar-cuenta"))
+      document.getElementById("modal-editar-cuenta").classList.remove("activo");
+  }
+
+  async function cargarCuentas() {
+    const res = await fetch(`${API_URL}/admin/cuentas`, {
+      headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
+    });
+    const data = await res.json();
+    const lista = document.getElementById("lista-cuentas");
+    lista.innerHTML = data.map(u => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:8px;background:white;">
+        <div>
+          <p style="font-weight:600;font-size:14px;">${u.nombre}</p>
+          <p style="font-size:12px;color:#666;">@${u.usuario} — ${u.rol === 'admin' ? '🔴 Administrador' : '🏢 Entidad'}</p>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="abrirEditar(${u.id},'${u.nombre}','${u.usuario}')" style="padding:5px 10px;background:#2d6a9f;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;">✏️ Editar</button>
+          ${u.id !== sesion.id ? `<button onclick="eliminarCuenta(${u.id},'${u.nombre}')" style="padding:5px 10px;background:#dc3545;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;">🗑️ Eliminar</button>` : '<span style="font-size:11px;color:#aaa;">(tu cuenta)</span>'}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function crearCuenta() {
+    const nombre = document.getElementById("nueva-nombre").value.trim();
+    const usuario = document.getElementById("nueva-usuario").value.trim();
+    const password = document.getElementById("nueva-password").value.trim();
+    const rol = document.getElementById("nuevo-rol").value;
+    if (!nombre || !usuario || !password) { alert("Completa todos los campos."); return; }
+    const res = await fetch(`${API_URL}/admin/cuentas`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-usuario-id": sesion.id, "x-rol": sesion.rol },
+      body: JSON.stringify({ nombre, usuario, password, rol })
+    });
+    const data = await res.json();
+    alert(data.message);
+    document.getElementById("nueva-nombre").value = "";
+    document.getElementById("nueva-usuario").value = "";
+    document.getElementById("nueva-password").value = "";
+    await cargarCuentas();
+  }
+
+  function abrirEditar(id, nombre, usuario) {
+    document.getElementById("editar-id").value = id;
+    document.getElementById("editar-nombre").value = nombre;
+    document.getElementById("editar-usuario").value = usuario;
+    document.getElementById("editar-password").value = "";
+    document.getElementById("modal-editar-cuenta").classList.add("activo");
+  }
+
+  async function guardarEdicion() {
+    const id = document.getElementById("editar-id").value;
+    const nombre = document.getElementById("editar-nombre").value.trim();
+    const usuario = document.getElementById("editar-usuario").value.trim();
+    const password = document.getElementById("editar-password").value.trim();
+    const res = await fetch(`${API_URL}/admin/cuentas/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "x-usuario-id": sesion.id, "x-rol": sesion.rol },
+      body: JSON.stringify({ nombre, usuario, password })
+    });
+    const data = await res.json();
+    alert(data.message);
     document.getElementById("modal-editar-cuenta").classList.remove("activo");
-}
+    await cargarCuentas();
+  }
 
-async function cargarCuentas() {
-  const res = await fetch(`${API_URL}/admin/cuentas`, {
-    headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
-  });
-  const data = await res.json();
-  const lista = document.getElementById("lista-cuentas");
-
-  lista.innerHTML = data.map(u => `
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:8px;background:white;">
-      <div>
-        <p style="font-weight:600;font-size:14px;">${u.nombre}</p>
-        <p style="font-size:12px;color:#666;">@${u.usuario} — ${u.rol === 'admin' ? '🔴 Administrador' : '🏢 Entidad'}</p>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <button onclick="abrirEditar(${u.id},'${u.nombre}','${u.usuario}')" style="padding:5px 10px;background:#2d6a9f;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;">✏️ Editar</button>
-        ${u.id !== sesion.id ? `<button onclick="eliminarCuenta(${u.id},'${u.nombre}')" style="padding:5px 10px;background:#dc3545;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;">🗑️ Eliminar</button>` : '<span style="font-size:11px;color:#aaa;">(tu cuenta)</span>'}
-      </div>
-    </div>
-  `).join('');
-}
-
-async function crearCuenta() {
-  const nombre = document.getElementById("nueva-nombre").value.trim();
-  const usuario = document.getElementById("nueva-usuario").value.trim();
-  const password = document.getElementById("nueva-password").value.trim();
-  const rol = document.getElementById("nuevo-rol").value;
-
-  if (!nombre || !usuario || !password) { alert("Completa todos los campos."); return; }
-
-  const res = await fetch(`${API_URL}/admin/cuentas`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-usuario-id": sesion.id, "x-rol": sesion.rol },
-    body: JSON.stringify({ nombre, usuario, password, rol })
-  });
-  const data = await res.json();
-  alert(data.message);
-  document.getElementById("nueva-nombre").value = "";
-  document.getElementById("nueva-usuario").value = "";
-  document.getElementById("nueva-password").value = "";
-  await cargarCuentas();
-}
-
-function abrirEditar(id, nombre, usuario) {
-  document.getElementById("editar-id").value = id;
-  document.getElementById("editar-nombre").value = nombre;
-  document.getElementById("editar-usuario").value = usuario;
-  document.getElementById("editar-password").value = "";
-  document.getElementById("modal-editar-cuenta").classList.add("activo");
-}
-
-async function guardarEdicion() {
-  const id = document.getElementById("editar-id").value;
-  const nombre = document.getElementById("editar-nombre").value.trim();
-  const usuario = document.getElementById("editar-usuario").value.trim();
-  const password = document.getElementById("editar-password").value.trim();
-
-  const res = await fetch(`${API_URL}/admin/cuentas/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", "x-usuario-id": sesion.id, "x-rol": sesion.rol },
-    body: JSON.stringify({ nombre, usuario, password })
-  });
-  const data = await res.json();
-  alert(data.message);
-  document.getElementById("modal-editar-cuenta").classList.remove("activo");
-  await cargarCuentas();
-}
-
-async function eliminarCuenta(id, nombre) {
-  if (!confirm(`¿Eliminar la cuenta de "${nombre}"? Esta acción no se puede deshacer.`)) return;
-  const res = await fetch(`${API_URL}/admin/cuentas/${id}`, {
-    method: "DELETE",
-    headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
-  });
-  const data = await res.json();
-  alert(data.message);
-  await cargarCuentas();
-}
-
-function limpiarFiltros() {
-  document.getElementById("filtro-estado").value = "";
-  document.getElementById("filtro-categoria").value = "";
-  document.getElementById("filtro-fecha-inicio").value = "";
-  document.getElementById("filtro-fecha-fin").value = "";
-  cargarReportes();
-}
+  async function eliminarCuenta(id, nombre) {
+    if (!confirm(`¿Eliminar la cuenta de "${nombre}"? Esta acción no se puede deshacer.`)) return;
+    const res = await fetch(`${API_URL}/admin/cuentas/${id}`, {
+      method: "DELETE",
+      headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
+    });
+    const data = await res.json();
+    alert(data.message);
+    await cargarCuentas();
+  }
 
   function cerrarSesion() {
     localStorage.removeItem("sesion");
     window.location.href = "login.html";
   }
-let mapaReporte = null;
 
-function verUbicacion(ubicacion, reporteId) {
-  document.getElementById("modal-mapa").classList.add("activo");
-  const partes = ubicacion.split("|");
-const coordsTexto = partes[0];
-const direccionTexto = partes.length > 1 ? partes[1] : partes[0];
-document.getElementById("texto-ubicacion").textContent = "📍 " + direccionTexto;
-const coords = coordsTexto.match(/-?[\d.]+/g);
-
-  if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
-
-  setTimeout(() => {
-    mapaReporte = L.map('mapa-reporte').setView([8.7479, -75.8814], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(mapaReporte);
-
-    const coords = ubicacion.match(/-?[\d.]+/g);
-    if (coords && coords.length >= 2) {
-      const lat = parseFloat(coords[0]);
-      const lng = parseFloat(coords[1]);
-      mapaReporte.setView([lat, lng], 16);
-      L.marker([lat, lng]).addTo(mapaReporte).bindPopup("Reporte #" + reporteId).openPopup();
-    } else {
-      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(ubicacion + ", Montería, Colombia")}&format=json&limit=1`)
-        .then(r => r.json())
-        .then(data => {
-          if (data.length > 0) {
-            const lat = parseFloat(data[0].lat);
-            const lng = parseFloat(data[0].lon);
-            mapaReporte.setView([lat, lng], 16);
-            L.marker([lat, lng]).addTo(mapaReporte).bindPopup("Reporte #" + reporteId).openPopup();
-          }
-        });
-    }
-  }, 150);
-}
-
-function cerrarModalMapa(event) {
-  if (event.target === document.getElementById("modal-mapa")) cerrarModalMapaBtn();
-}
-
-function cerrarModalMapaBtn() {
-  document.getElementById("modal-mapa").classList.remove("activo");
-  if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
-}
   cargarReportes();
+
   setInterval(() => {
-  const s = JSON.parse(localStorage.getItem("sesion") || "null");
-  if (!s || (s.expira && Date.now() > s.expira)) {
-    localStorage.removeItem("sesion");
-    alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
-    window.location.href = "login.html";
-  }
-}, 60 * 1000);
+    const s = JSON.parse(localStorage.getItem("sesion") || "null");
+    if (!s || (s.expira && Date.now() > s.expira)) {
+      localStorage.removeItem("sesion");
+      alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
+      window.location.href = "login.html";
+    }
+  }, 60 * 1000);
 </script>
 
 </body>
