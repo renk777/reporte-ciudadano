@@ -541,18 +541,18 @@ function cerrarModalMapaBtn() {
   if (mapaReporte) { mapaReporte.remove(); mapaReporte = null; }
 }
   cargarReportes();
-</script>
 
-function mostrarNotif(titulo, subtitulo = "", tipo = "exito") {
-  const n = document.getElementById("notificacion");
-  const colores = { exito: "#1a5e3a", error: "#c0392b", info: "#1a3c5e" };
-  const iconos  = { exito: "✅", error: "❌", info: "ℹ️" };
-  n.style.background = colores[tipo] || colores.exito;
-  document.getElementById("notif-icono").textContent = iconos[tipo] || "✅";
-  document.getElementById("notif-titulo").textContent = titulo;
-  document.getElementById("notif-subtitulo").textContent = subtitulo;
-  n.style.display = "flex";
-  setTimeout(() => n.style.display = "none", 4000);
-}
+  function mostrarNotif(titulo, subtitulo = "", tipo = "exito") {
+    const n = document.getElementById("notificacion");
+    const colores = { exito: "#1a5e3a", error: "#c0392b", info: "#1a3c5e" };
+    const iconos  = { exito: "✅", error: "❌", info: "ℹ️" };
+    n.style.background = colores[tipo] || colores.exito;
+    document.getElementById("notif-icono").textContent = iconos[tipo] || "✅";
+    document.getElementById("notif-titulo").textContent = titulo;
+    document.getElementById("notif-subtitulo").textContent = subtitulo;
+    n.style.display = "flex";
+    setTimeout(() => n.style.display = "none", 4000);
+  }
+</script>
 </body>
 </html>
