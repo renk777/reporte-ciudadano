@@ -37,12 +37,19 @@ header {
 @media (max-width: 768px) {
   body {
     flex-direction: column;
+    align-items: center;
     padding: 10px;
   }
 
   .container2 {
     width: 100%;
     margin-left: 0;
+    text-align: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
   }
 }
 body {
