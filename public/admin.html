@@ -425,6 +425,20 @@
   </div>
 </div>
 
+
+<!-- Modal confirmación eliminar -->
+<div class="modal-overlay" id="modal-confirmar">
+  <div class="modal" style="width:400px;max-width:95%;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">🗑️</div>
+    <h2 style="font-size:17px;color:#c0392b;margin-bottom:12px;">Confirmar eliminación</h2>
+    <p id="confirmar-texto" style="font-size:14px;color:#555;margin-bottom:24px;line-height:1.5;"></p>
+    <div class="modal-btns">
+      <button class="btn-cancelar" onclick="cancelarEliminar()">Cancelar</button>
+      <button class="btn-confirmar" style="background:#dc3545;" onclick="ejecutarEliminar()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="cerrarLightbox()">
   <button class="lightbox-cerrar" onclick="cerrarLightbox()">✕</button>
@@ -434,6 +448,7 @@
 <script>
   const API_URL = "https://reporte-ciudadano-production.up.railway.app";
   let reporteSeleccionado = null;
+  let cuentaAEliminar = null;
   let mapaReporte = null;
 
   const sesion = JSON.parse(localStorage.getItem("sesion") || "null");
@@ -710,15 +725,28 @@
     await cargarCuentas();
   }
 
-  async function eliminarCuenta(id, nombre) {
-    if (!confirm(`¿Eliminar la cuenta de "${nombre}"? Esta acción no se puede deshacer.`)) return;
-    const res = await fetch(`${API_URL}/admin/cuentas/${id}`, {
+  function eliminarCuenta(id, nombre) {
+    cuentaAEliminar = { id, nombre };
+    document.getElementById("confirmar-texto").textContent = `¿Eliminar la cuenta de "${nombre}"? Esta acción no se puede deshacer.`;
+    document.getElementById("modal-confirmar").classList.add("activo");
+  }
+
+  async function ejecutarEliminar() {
+    if (!cuentaAEliminar) return;
+    document.getElementById("modal-confirmar").classList.remove("activo");
+    const res = await fetch(`${API_URL}/admin/cuentas/${cuentaAEliminar.id}`, {
       method: "DELETE",
       headers: { "x-usuario-id": sesion.id, "x-rol": sesion.rol }
     });
     const data = await res.json();
-    mostrarNotif(data.message, "", "exito")
+    cuentaAEliminar = null;
+    mostrarNotif(data.message, "", "exito");
     await cargarCuentas();
+  }
+
+  function cancelarEliminar() {
+    cuentaAEliminar = null;
+    document.getElementById("modal-confirmar").classList.remove("activo");
   }
 
   function cerrarSesion() {
