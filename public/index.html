@@ -79,7 +79,19 @@
       
       <div id="preview"></div>
 
-      <button type="submit">✈ Enviar Reporte</button>
+      <button type="submit" id="btnEnviar">
+        <span id="btn-texto">✈ Enviar Reporte</span>
+        <span id="btn-spinner" style="display:none; align-items:center; gap:8px;">
+          <svg style="animation:spin 0.8s linear infinite;width:18px;height:18px;" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          Enviando...
+        </span>
+      </button>
+      <style>
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      </style>
 
     </form>
 
@@ -147,7 +159,23 @@
 
   <script src="script.js"></script>
   <script>
+    function setEnviando(estado) {
+      const btn = document.getElementById("btnEnviar");
+      const texto = document.getElementById("btn-texto");
+      const spinner = document.getElementById("btn-spinner");
+      btn.disabled = estado;
+      texto.style.display = estado ? "none" : "inline";
+      spinner.style.display = estado ? "flex" : "none";
+    }
+
+    // Interceptar el submit para activar el spinner
+    document.getElementById("formReporte").addEventListener("submit", function() {
+      setEnviando(true);
+    }, true); // capture=true para que corra antes que script.js
+
+    // Cuando mostrarNotif se llama, el reporte terminó → reactivar botón
     function mostrarNotif(titulo, subtitulo = "", tipo = "exito") {
+      setEnviando(false);
       const n = document.getElementById("notificacion");
       const colores = { exito: "#1a5e3a", error: "#c0392b", info: "#1a3c5e" };
       const iconos  = { exito: "✅", error: "❌", info: "ℹ️" };
