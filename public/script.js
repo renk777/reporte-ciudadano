@@ -1,14 +1,23 @@
 function mostrarNotificacion(mensaje, tipo = "info", duracion = 4000) {
-  const n = document.getElementById("notificacion");
-  n.textContent = mensaje;
-  n.className = tipo;
-  n.style.display = "block";
-  n.style.opacity = "1";
+  // Reactivar el botón de envío siempre que aparezca una notificación
+  if (typeof setEnviando === "function") setEnviando(false);
+
+  const colores = { exito: "#1a5e3a", error: "#c0392b", info: "#1a3c5e" };
+  const iconos  = { exito: "✅", error: "❌", info: "ℹ️" };
+
+  const n      = document.getElementById("notificacion");
+  const icono  = document.getElementById("notif-icono");
+  const titulo = document.getElementById("notif-titulo");
+  const subtit = document.getElementById("notif-subtitulo");
+
+  n.style.background = colores[tipo] || colores.info;
+  if (icono)  icono.textContent  = iconos[tipo] || "ℹ️";
+  if (titulo) titulo.textContent = mensaje;
+  if (subtit) subtit.textContent = "";
+  n.style.display = "flex";
+
   clearTimeout(window._notifTimer);
-  window._notifTimer = setTimeout(() => {
-    n.style.opacity = "0";
-    setTimeout(() => { n.style.display = "none"; }, 300);
-  }, duracion);
+  window._notifTimer = setTimeout(() => { n.style.display = "none"; }, duracion);
 }
 
 document.getElementById("descripcion").addEventListener("input", function() {

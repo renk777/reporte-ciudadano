@@ -160,32 +160,19 @@
   <script src="script.js"></script>
   <script>
     function setEnviando(estado) {
-      const btn = document.getElementById("btnEnviar");
-      const texto = document.getElementById("btn-texto");
+      const btn    = document.getElementById("btnEnviar");
+      const texto  = document.getElementById("btn-texto");
       const spinner = document.getElementById("btn-spinner");
+      if (!btn) return;
       btn.disabled = estado;
-      texto.style.display = estado ? "none" : "inline";
-      spinner.style.display = estado ? "flex" : "none";
+      texto.style.display  = estado ? "none"   : "inline";
+      spinner.style.display = estado ? "flex"  : "none";
     }
 
-    // Interceptar el submit para activar el spinner
+    // Activar spinner al hacer submit (capture=true corre antes que script.js)
     document.getElementById("formReporte").addEventListener("submit", function() {
       setEnviando(true);
-    }, true); // capture=true para que corra antes que script.js
-
-    // Cuando mostrarNotif se llama, el reporte terminó → reactivar botón
-    function mostrarNotif(titulo, subtitulo = "", tipo = "exito") {
-      setEnviando(false);
-      const n = document.getElementById("notificacion");
-      const colores = { exito: "#1a5e3a", error: "#c0392b", info: "#1a3c5e" };
-      const iconos  = { exito: "✅", error: "❌", info: "ℹ️" };
-      n.style.background = colores[tipo] || colores.exito;
-      document.getElementById("notif-icono").textContent = iconos[tipo] || "✅";
-      document.getElementById("notif-titulo").textContent = titulo;
-      document.getElementById("notif-subtitulo").textContent = subtitulo;
-      n.style.display = "flex";
-      setTimeout(() => n.style.display = "none", 4000);
-    }
+    }, true);
   </script>
 </body>
 </html>
