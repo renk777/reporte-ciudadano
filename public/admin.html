@@ -59,6 +59,60 @@
     }
     .btn-cerrar:hover { background: rgba(212,104,104,0.3); }
 
+    /* Hamburguesa */
+    .btn-hamburguesa {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+    .btn-hamburguesa span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .btn-hamburguesa:hover { background: rgba(255,255,255,0.3); }
+
+    /* Menú desplegable mobile */
+    .menu-mobile {
+      display: none;
+      flex-direction: column;
+      background: #1a3c5e;
+      padding: 8px 14px 14px;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+    .menu-mobile.abierto { display: flex; }
+    .menu-mobile button {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .menu-mobile button:hover { background: rgba(255,255,255,0.22); }
+
+    @media (max-width: 768px) {
+      .header-btns-desktop { display: none; }
+      .btn-hamburguesa { display: flex; }
+    }
+    .header-btns-desktop { display: flex; gap: 6px; }
+
     .stats {
       display: flex;
       gap: 16px;
@@ -279,9 +333,22 @@
     <span id="nombre-admin"></span>
   </div>
   <img src="logov2.png" class="logo-header">
-  <button class="btn-cerrar" onclick="abrirGestionCuentas()">👥 Cuentas</button>
-  <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
+  <!-- Botones normales en desktop -->
+  <div class="header-btns-desktop">
+    <button class="btn-cerrar" onclick="abrirGestionCuentas()">👥 Cuentas</button>
+    <button class="btn-cerrar" onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+  <!-- Hamburguesa en mobile -->
+  <button class="btn-hamburguesa" onclick="toggleMenuMobile()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<!-- Menú desplegable mobile -->
+<div id="menu-mobile" class="menu-mobile">
+  <button onclick="abrirGestionCuentas(); cerrarMenuMobile()">👥 Cuentas</button>
+  <button onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+</div>
 
 <div class="stats">
   <div class="stat-card"><div class="numero" id="stat-total">-</div><div class="etiqueta">Total reportes</div></div>
@@ -748,6 +815,23 @@
     cuentaAEliminar = null;
     document.getElementById("modal-confirmar").classList.remove("activo");
   }
+
+  function toggleMenuMobile() {
+    document.getElementById("menu-mobile").classList.toggle("abierto");
+  }
+
+  function cerrarMenuMobile() {
+    document.getElementById("menu-mobile").classList.remove("abierto");
+  }
+
+  // Cerrar menú mobile al hacer clic fuera
+  document.addEventListener("click", function(e) {
+    const menu = document.getElementById("menu-mobile");
+    const btn = document.querySelector(".btn-hamburguesa");
+    if (menu.classList.contains("abierto") && !menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.classList.remove("abierto");
+    }
+  });
 
   function cerrarSesion() {
     localStorage.removeItem("sesion");
