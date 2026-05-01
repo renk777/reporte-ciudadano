@@ -107,11 +107,12 @@
     }
     .menu-mobile button:hover { background: rgba(255,255,255,0.22); }
 
-    @media (max-width: 768px) {
-      .header-btns-desktop { display: none; }
-      .btn-hamburguesa { display: flex; }
-    }
     .header-btns-desktop { display: flex; gap: 6px; }
+
+    @media (max-width: 768px) {
+      .header-btns-desktop { display: none !important; }
+      .btn-hamburguesa { display: flex !important; }
+    }
 
     .stats {
       display: flex;
